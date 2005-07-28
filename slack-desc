@@ -1,4 +1,4 @@
-mysql: MySQL Server & Client 4.1.12 (2005-05-15)
+mysql: MySQL Server & Client 4.1.13 (2005-07-21)
 mysql:
 mysql: MySQL is a fast, multi-threaded, multi-user, and robust SQL (Structured
 mysql: Query Language) database server. It comes with a nice API which makes
@@ -17,5 +17,5 @@ mysql:                                --with-unix-socket-path=/var/mysql \
 mysql:                                --with-openssl \
 mysql:                                --with-charset=utf8 \
 mysql:                                --with-extra-charsets=all
-mysql: Package build: 2005-05-16 21:32 EET
+mysql: Package build: 2005-07-28 21:56 EET
 mysql:
