@@ -1,21 +1,17 @@
-mysql: MySQL Server & Client 4.1.13 (2005-07-21)
+mysql: MySQL 5.0.15 (2005-10-24)
 mysql:
-mysql: MySQL is a fast, multi-threaded, multi-user, and robust SQL (Structured
-mysql: Query Language) database server. It comes with a nice API which makes
-mysql: it easy to integrate into other applications. The home page for MySQL
-mysql: is http://www.mysql.com/
+mysql:   MySQL is a fast, multi-threaded, multi-user, and robust SQL
+mysql: (Structured Query Language) database server. It comes with a nice API
+mysql: which makes it easy to integrate into other applications.
+mysql:   In this new release there is support for ANSI stored procedures and
+mysql: triggers, views, server side-cursors, new storage engines, tools and
+mysql: extensions.
+mysql:   Find out more at http://www.mysql.com
 mysql:
-mysql: IMPORTANT: You should rebuild you PHP installation!
 mysql:
 mysql: ---
-mysql: Package build by Georgi D. Sotirov <gdsotirov@dir.bg>
-mysql: Configure command: ./configure --prefix=/usr \
-mysql:                                --sysconfdir=/etc \
-mysql:                                --localstatedir=/var \
-mysql:                                --enable-thread-safe-client \
-mysql:                                --with-unix-socket-path=/var/mysql \
-mysql:                                --with-openssl \
-mysql:                                --with-charset=utf8 \
-mysql:                                --with-extra-charsets=all
-mysql: Package build: 2005-07-28 21:56 EET
+mysql: Packager: Georgi D. Sotirov <gdsotirov@dir.bg>
+mysql: Package build: 2005-10-28 19:59 EEST
 mysql:
+
+
