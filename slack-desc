@@ -1,4 +1,4 @@
-mysql: MySQL 5.0.15 (2005-10-24)
+mysql: MySQL 5.0.18 (2005-12-30)
 mysql:
 mysql:   MySQL is a fast, multi-threaded, multi-user, and robust SQL
 mysql: (Structured Query Language) database server. It comes with a nice API
@@ -11,7 +11,7 @@ mysql:
 mysql:
 mysql: ---
 mysql: Packager: Georgi D. Sotirov <gdsotirov@dir.bg>
-mysql: Package build: 2005-10-28 19:59 EEST
+mysql: Package build: 2006-01-04 22:29 EEST
 mysql:
 
 
