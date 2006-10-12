@@ -1,0 +1,134 @@
+#!/bin/sh
+# Slackware build script for MySQL
+# Written by: Georgi D. Sotirov <gdsotirov@dir.bg>
+# Based on the original script maintained by Patrick Volkerding <volkerdi@slackware.com>
+
+. /etc/slack-package.conf
+
+CWD=`pwd`
+TMP=${TMP:-/tmp}
+if [ ! -d $TMP ]; then
+  mkdir -p $TMP
+fi
+
+NAME=mysql
+VERSION=5.0.26
+ARCH=${ARCH:-i486}
+BUILD=${BUILD:-1}
+
+PKG=$TMP/package-$NAME
+rm -rf $PKG
+mkdir -p $PKG
+
+cd $TMP
+rm -rf $NAME-$VERSION
+tar xzvf $CWD/$NAME-$VERSION.tar.gz
+cd $NAME-$VERSION
+fix_source
+
+# Configure
+CXX=gcc \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS -felide-constructors -fno-exceptions -fno-rtti" \
+./configure \
+  --prefix=/usr \
+  --with-mysqld-user=mysql \
+  --with-unix-socket-path=/var/run/mysql/mysql.sock \
+  --localstatedir=/var/lib/mysql \
+  --enable-assembler \
+  --with-raid \
+  --without-debug \
+  --enable-thread-safe-client \
+  --without-bench \
+  --with-extra-charsets=complex \
+  --with-vio \
+  --with-openssl \
+  --program-prefix="" \
+  --program-suffix="" \
+  $ARCH-slackware-linux
+
+# Build and install
+make -j3 || exit
+make DESTDIR=$PKG install
+
+# Strip ELF objects:
+(cd $PKG; strip_bin; strip_lib)
+
+mkdir -p $PKG/etc
+( cd support-files
+  cp my-huge.cnf my-large.cnf my-medium.cnf my-small.cnf $PKG/etc )
+
+# Add init script:
+mkdir -p $PKG/etc/rc.d
+zcat $CWD/rc.mysqld.gz > $PKG/etc/rc.d/rc.mysqld.new
+
+# Create documentation
+create_docs $PKG $NAME-$VERSION
+
+rm -f $PKG/usr/info/dir
+gzip_man $PKG
+gzip_info $PKG
+
+# Fix permision
+bin_perms $PKG
+
+mkdir -p $PKG/var/lib/mysql
+chown mysql.mysql $PKG/var/lib/mysql
+chmod 750 $PKG/var/lib/mysql
+
+mkdir -p $PKG/var/run/mysql
+chown mysql.mysql $PKG/var/run/mysql
+chmod 755 $PKG/var/run/mysql
+
+# Install script
+mkdir -p $PKG/install
+zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+# Include build information
+mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -m 644 $CWD/mysql.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -m 644 $CWD/slack-desc $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -m 644 $CWD/rc.mysqld.gz $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -m 644 $CWD/doinst.sh.gz $PKG/usr/src/slackbuilds/$NAME-$VERSION
+
+# Add some handy library symlinks:
+if [ -r $PKG/usr/lib/mysql/libmysqlclient.so.15 ]; then
+  ( cd $PKG/usr/lib
+    rm -f libmysqlclient.so libmysqlclient.so.15
+    ln -sf mysql/libmysqlclient.so .
+    ln -sf mysql/libmysqlclient.so.15 .
+    ln -sf mysql/libmysqlclient.so.14 .
+  )
+else
+  exit 1
+fi
+if [ -r $PKG/usr/lib/mysql/libmysqlclient_r.so.15 ]; then
+  ( cd $PKG/usr/lib
+    rm -f libmysqlclient_r.so libmysqlclient_r.so.15
+    ln -sf mysql/libmysqlclient_r.so .
+    ln -sf mysql/libmysqlclient_r.so.15 .
+    ln -sf mysql/libmysqlclient_r.so.14 .
+  )
+else
+  exit 1
+fi
+
+# Remove test suite
+rm -r $PKG/usr/mysql-test
+
+# Build package:
+PKG_DIR=${PKG_DIR:-/usr/src/slackpack}
+cd $PKG
+PKGNAME=$NAME-$VERSION-$ARCH-$BUILD$MYIN
+makepkg -l y -c n $PKG_DIR/$PKGNAME.tgz
+( cd $PKG_DIR
+  md5sum $PKGNAME.tgz > $PKGNAME.tgz.md5
+  cat $PKG/install/slack-desc > $PKG_DIR/$PKGNAME.txt
+)
+
+if [ "$1" == "--cleanup" ]; then
+   rm -rf $TMP/$NAME-$VERSION
+   rm -rf $TMP/package-$NAME
+fi
+
