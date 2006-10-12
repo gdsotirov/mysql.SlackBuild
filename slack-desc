@@ -1,17 +1,11 @@
-mysql: MySQL 5.0.18 (2005-12-30)
+mysql: mysql (SQL-based relational database server)
 mysql:
-mysql:   MySQL is a fast, multi-threaded, multi-user, and robust SQL
-mysql: (Structured Query Language) database server. It comes with a nice API
+mysql: MySQL is a fast, multi-threaded, multi-user, and robust SQL
+mysql: (Structured Query Language) database server.  It comes with a nice API
 mysql: which makes it easy to integrate into other applications.
-mysql:   In this new release there is support for ANSI stored procedures and
-mysql: triggers, views, server side-cursors, new storage engines, tools and
-mysql: extensions.
-mysql:   Find out more at http://www.mysql.com
+mysql:
+mysql: The home page for MySQL is http://www.mysql.com/
 mysql:
 mysql:
-mysql: ---
-mysql: Packager: Georgi D. Sotirov <gdsotirov@dir.bg>
-mysql: Package build: 2006-01-04 22:29 EEST
+mysql: Packaged by Georgi D. Sotirov <gdsotirov@dir.bg
 mysql:
-
-
