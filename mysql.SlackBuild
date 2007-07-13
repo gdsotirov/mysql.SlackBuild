@@ -2,8 +2,9 @@
 # Slackware build script for MySQL
 # Written by: Georgi D. Sotirov <gdsotirov@dir.bg>
 # Based on the original script maintained by Patrick Volkerding <volkerdi@slackware.com>
+#
 
-. /etc/slack-package.conf
+. ../slack-package.conf
 
 CWD=`pwd`
 TMP=${TMP:-/tmp}
@@ -12,7 +13,7 @@ if [ ! -d $TMP ]; then
 fi
 
 NAME=mysql
-VERSION=5.0.41
+VERSION=5.0.45
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
 
@@ -30,22 +31,22 @@ fix_source
 CXX=gcc \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS -felide-constructors -fno-exceptions -fno-rtti" \
-./configure \
-  --prefix=/usr \
-  --with-mysqld-user=mysql \
-  --with-unix-socket-path=/var/run/mysql/mysql.sock \
-  --localstatedir=/var/lib/mysql \
-  --enable-assembler \
-  --with-raid \
-  --without-debug \
-  --enable-thread-safe-client \
-  --without-bench \
-  --with-extra-charsets=complex \
-  --with-vio \
-  --with-openssl \
-  --program-prefix="" \
-  --program-suffix="" \
-  $ARCH-slackware-linux
+./configure --build=$ARCH-slackware-linux \
+            --host=$ARCH-slackware-linux \
+            --prefix=/usr \
+            --with-mysqld-user=mysql \
+            --with-unix-socket-path=/var/run/mysql/mysql.sock \
+            --localstatedir=/var/lib/mysql \
+            --enable-assembler \
+            --with-raid \
+            --without-debug \
+            --enable-thread-safe-client \
+            --without-bench \
+            --with-extra-charsets=complex \
+            --with-vio \
+            --with-openssl \
+            --program-prefix="" \
+            --program-suffix=""
 
 # Build and install
 make -j3 || exit
