@@ -13,7 +13,7 @@ if [ ! -d $TMP ]; then
 fi
 
 NAME=mysql
-VERSION=5.0.51
+VERSION=5.0.77
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
 
@@ -34,9 +34,12 @@ CXXFLAGS="$SLKCFLAGS -felide-constructors -fno-exceptions -fno-rtti" \
 ./configure --build=$ARCH-slackware-linux \
             --host=$ARCH-slackware-linux \
             --prefix=/usr \
+            --infodir=/usr/info \
+            --mandir=/usr/man \
+            --docdir=/usr/doc/$NAME-$VERSION \
+            --localstatedir=/var/lib/mysql \
             --with-mysqld-user=mysql \
             --with-unix-socket-path=/var/run/mysql/mysql.sock \
-            --localstatedir=/var/lib/mysql \
             --enable-assembler \
             --with-raid \
             --without-debug \
@@ -46,11 +49,11 @@ CXXFLAGS="$SLKCFLAGS -felide-constructors -fno-exceptions -fno-rtti" \
             --with-vio \
             --with-openssl \
             --program-prefix="" \
-            --program-suffix=""
+            --program-suffix="" || exit 1
 
 # Build and install
-make -j3 || exit
-make DESTDIR=$PKG install
+make -j4 || exit 2
+make DESTDIR=$PKG install || exit 3
 
 # Strip ELF objects:
 (cd $PKG; strip_bin; strip_lib)
@@ -60,8 +63,8 @@ mkdir -p $PKG/etc
   cp my-huge.cnf my-large.cnf my-medium.cnf my-small.cnf $PKG/etc )
 
 # Add init script:
-mkdir -p $PKG/etc/rc.d
-zcat $CWD/rc.mysqld.gz > $PKG/etc/rc.d/rc.mysqld.new
+install -m 755 -d $PKG/etc/rc.d
+install -m 644 $CWD/rc.mysqld $PKG/etc/rc.d/rc.mysqld.new
 
 # Create documentation
 create_docs $PKG $NAME-$VERSION
@@ -84,15 +87,17 @@ chmod 755 $PKG/var/run/mysql
 
 # Install script
 mkdir -p $PKG/install
-zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
-cat $CWD/slack-desc > $PKG/install/slack-desc
+install -m 644 $CWD/doinst.sh      $PKG/install/doinst.sh
+install -m 644 $CWD/slack-desc     $PKG/install/slack-desc
+install -m 644 $CWD/slack-required $PKG/install/slack-required
 
 # Include build information
 mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/mysql.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/slack-desc $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/rc.mysqld.gz $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/doinst.sh.gz $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -m 644 $CWD/doinst.sh        $PKG/usr/src/slackbuilds/$NAME-$VERSION/doinst.sh
+install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
+install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
+install -m 644 $CWD/rc.mysqld        $PKG/usr/src/slackbuilds/$NAME-$VERSION/rc.mysqld
+install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
 
 # Add some handy library symlinks:
 if [ -r $PKG/usr/lib/mysql/libmysqlclient.so.15 ]; then
