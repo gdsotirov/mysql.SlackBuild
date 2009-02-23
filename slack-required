@@ -1,0 +1,5 @@
+glibc-solibs >= 2.7
+ncurses >= 5.6
+openssl >= 0.9.8i | openssl-solibs >= 0.9.8i
+perl >= 5.10.0
+zlib >= 1.2.3
