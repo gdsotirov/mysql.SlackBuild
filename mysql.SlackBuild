@@ -13,7 +13,7 @@ if [ ! -d $TMP ]; then
 fi
 
 NAME=mysql
-VERSION=5.0.87
+VERSION=5.0.88
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
 
