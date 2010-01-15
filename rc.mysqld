@@ -1,8 +1,9 @@
 #!/bin/sh
 # Start/stop/restart mysqld.
 #
-# Copyright 2003 Patrick J. Volkerding, Concord, CA
-# Copyright 2003 Slackware Linux, Inc., Concord, CA
+# Copyright 2003  Patrick J. Volkerding, Concord, CA
+# Copyright 2003  Slackware Linux, Inc., Concord, CA
+# Copyright 2008  Patrick J. Volkerding, Sebeka, MN
 #
 # This program comes with NO WARRANTY, to the extent permitted by law.
 # You may redistribute copies of this program under the terms of the
@@ -14,12 +15,16 @@
 # Before you can run MySQL, you must have a database.  To install an initial
 # database, do this as root:
 #
-#   su - mysql
-#   mysql_install_db
+#   mysql_install_db --user=mysql
 #
-# Note that step one is becoming the mysql user.  It's important to do this
-# before making any changes to the database, or mysqld won't be able to write
-# to it later (this can be fixed with 'chown -R mysql.mysql /var/lib/mysql').
+# Note that the mysql user must exist in /etc/passwd, and the created files
+# will be owned by this dedicated user.  This is important, or else mysql
+# (which runs as user "mysql") will not be able to write to the database
+# later (this can be fixed with 'chown -R mysql.mysql /var/lib/mysql').
+#
+# To increase system security, consider using "mysql_secure_installation"
+# as well.  For more information on this tool, please read:
+#   man mysql_secure_installation
 
 # To allow outside connections to the database comment out the next line.
 # If you don't need incoming network connections, then leave the line
