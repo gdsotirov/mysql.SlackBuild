@@ -1,119 +1,142 @@
 #!/bin/sh
-# Slackware build script for MySQL
+
+# Slackware build script for MySQL 5.1
 # Written by: Georgi D. Sotirov <gdsotirov@dir.bg>
 # Based on the original script maintained by Patrick Volkerding <volkerdi@slackware.com>
+
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
 . ../slack-package.conf
 
-CWD=`pwd`
-TMP=${TMP:-/tmp}
-if [ ! -d $TMP ]; then
-  mkdir -p $TMP
-fi
-
 NAME=mysql
-VERSION=5.0.89
+VERSION=5.1.42
+SO_VER=16
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
 
+TMP=${TMP:-/tmp}
+CWD=${CWD:-`pwd`}
+PKG_DIR=${PKG_DIR:-/tmp}
+
+if [ ! -e $TMP ]; then
+  mkdir -p $TMP # location to build the source
+fi
+
+SRC=$TMP/$NAME-$VERSION
+if [ -e $SRC -a -d $SRC ]; then
+  echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
+  exit 1
+fi
+
 PKG=$TMP/package-$NAME
-rm -rf $PKG
+if [ -e $PKG -a -d $PKG ]; then
+  echo "Package creation directory '$PKG' already exists! Please, move it or remove it."
+  exit 2
+fi
 mkdir -p $PKG
 
+# Extract and fix source
 cd $TMP
-rm -rf $NAME-$VERSION
 tar xzvf $CWD/$NAME-$VERSION.tar.gz
 cd $NAME-$VERSION
 fix_source
 
 # Configure
+CC=gcc \
 CXX=gcc \
 CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS -felide-constructors -fno-exceptions -fno-rtti" \
+CXXFLAGS="$SLKCFLAGS -O3 -felide-constructors -fno-exceptions -fno-rtti" \
 ./configure --build=$ARCH-slackware-linux \
             --host=$ARCH-slackware-linux \
             --prefix=/usr \
+            --libexecdir=/usr/sbin \
+            --sysconfdir=/etc \
+            --localstatedir=/var/lib/mysql \
+            --datadir=/usr/share \
             --infodir=/usr/info \
             --mandir=/usr/man \
             --docdir=/usr/doc/$NAME-$VERSION \
-            --localstatedir=/var/lib/mysql \
+            --enable-shared=yes \
+            --enable-static=no \
+            --enable-assembler \
+            --enable-thread-safe-client \
+            --with-charset=utf8 \
+            --with-extra-charsets=complex \
             --with-mysqld-user=mysql \
             --with-unix-socket-path=/var/run/mysql/mysql.sock \
-            --enable-assembler \
-            --with-raid \
-            --without-debug \
-            --enable-thread-safe-client \
-            --without-bench \
-            --with-extra-charsets=complex \
-            --with-vio \
-            --with-openssl \
-            --program-prefix="" \
-            --program-suffix="" || exit 1
+            --with-libwrap \
+            --with-big-tables \
+            --with-ssl=/usr \
+            --with-plugins=max-no-ndb \
+            --with-readline \
+            --without-debug || exit 1
 
 # Build and install
 make -j4 || exit 2
 make DESTDIR=$PKG install || exit 3
 
-# Strip ELF objects:
-(cd $PKG; strip_bin; strip_lib)
+# Custom install steps
+# - Remove test & benchmark suites
+rm -rf $PKG/usr/mysql-test
+rm -rf $PKG/usr/sql-bench
 
-mkdir -p $PKG/etc
-( cd support-files
-  cp my-huge.cnf my-large.cnf my-medium.cnf my-small.cnf $PKG/etc )
+# - Move configuration files in the proper location
+install -d -m 755 $PKG/etc
+install -m 644 $PKG/usr/share/mysql/my-{huge,large,medium,small,innodb-heavy-4G}.cnf $PKG/etc
+rm -f $PKG/usr/share/mysql/my-{huge,large,medium,small,innodb-heavy-4G}.cnf
 
-# Add init script:
+# - Add init script
 install -m 755 -d $PKG/etc/rc.d
 install -m 644 $CWD/rc.mysqld $PKG/etc/rc.d/rc.mysqld.new
 
-# Create documentation
+# - Create databases storage location
+install -d -o mysql -g mysql -m 750 $PKG/var/lib/mysql
+# - Create socket storage location
+install -d -o mysql -g mysql -m 755 $PKG/var/run/mysql
+
+# Prepare
+bin_perms $PKG
+sbin_perms $PKG
+(cd $PKG; strip_bin; strip_lib)
+gzip_man $PKG
+rm -f $PKG/usr/info/dir
+gzip_info $PKG
 create_docs $PKG $NAME-$VERSION
 rm -f $PKG/usr/doc/$NAME-$VERSION/Docs/manual.chm
 
-rm -f $PKG/usr/info/dir
-gzip_man $PKG
-gzip_info $PKG
-
-# Fix permision
-bin_perms $PKG
-
-mkdir -p $PKG/var/lib/mysql
-chown mysql.mysql $PKG/var/lib/mysql
-chmod 750 $PKG/var/lib/mysql
-
-mkdir -p $PKG/var/run/mysql
-chown mysql.mysql $PKG/var/run/mysql
-chmod 755 $PKG/var/run/mysql
-
-# Install script
-mkdir -p $PKG/install
-install -m 644 $CWD/doinst.sh      $PKG/install/doinst.sh
-install -m 644 $CWD/slack-desc     $PKG/install/slack-desc
-install -m 644 $CWD/slack-required $PKG/install/slack-required
-
-# Include build information
-mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/doinst.sh        $PKG/usr/src/slackbuilds/$NAME-$VERSION/doinst.sh
-install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
-install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
-install -m 644 $CWD/rc.mysqld        $PKG/usr/src/slackbuilds/$NAME-$VERSION/rc.mysqld
-install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
-
 # Add some handy library symlinks:
-if [ -r $PKG/usr/lib/mysql/libmysqlclient.so.15 ]; then
+if [ -r $PKG/usr/lib/mysql/libmysqlclient.so.$SO_VER ]; then
   ( cd $PKG/usr/lib
     rm -f libmysqlclient.so libmysqlclient.so.15
     ln -sf mysql/libmysqlclient.so .
+    ln -sf mysql/libmysqlclient.so.$SO_VER .
     ln -sf mysql/libmysqlclient.so.15 .
     ln -sf mysql/libmysqlclient.so.14 .
   )
 else
   exit 1
 fi
-if [ -r $PKG/usr/lib/mysql/libmysqlclient_r.so.15 ]; then
+if [ -r $PKG/usr/lib/mysql/libmysqlclient_r.so.$SO_VER ]; then
   ( cd $PKG/usr/lib
     rm -f libmysqlclient_r.so libmysqlclient_r.so.15
     ln -sf mysql/libmysqlclient_r.so .
+    ln -sf mysql/libmysqlclient_r.so.$SO_VER .
     ln -sf mysql/libmysqlclient_r.so.15 .
     ln -sf mysql/libmysqlclient_r.so.14 .
   )
@@ -121,16 +144,27 @@ else
   exit 1
 fi
 
-# Remove test suite
-rm -r $PKG/usr/mysql-test
+# Install script and info
+mkdir -p $PKG/install
+install -m 644 $CWD/doinst.sh      $PKG/install/doinst.sh
+install -m 644 $CWD/slack-desc     $PKG/install/slack-desc
+install -m 644 $CWD/slack-required $PKG/install/slack-required
+install -m 644 $CWD/slack-suggests $PKG/install/slack-suggests
+
+mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -m 644 $CWD/doinst.sh        $PKG/usr/src/slackbuilds/$NAME-$VERSION/doinst.sh
+install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
+install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
+install -m 644 $CWD/slack-suggests   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-suggests
+install -m 644 $CWD/rc.mysqld        $PKG/usr/src/slackbuilds/$NAME-$VERSION/rc.mysqld
+install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
 
 # Build package:
-PKG_DIR=${PKG_DIR:-/usr/src/slackpack}
 cd $PKG
 PKGNAME=$NAME-$VERSION-$ARCH-$BUILD$MYIN
-makepkg -l y -c n $PKG_DIR/$PKGNAME.tgz
+makepkg -l y -c n $PKG_DIR/$PKGNAME.txz
 ( cd $PKG_DIR
-  md5sum $PKGNAME.tgz > $PKGNAME.tgz.md5
+  md5sum $PKGNAME.txz > $PKGNAME.txz.md5
   cat $PKG/install/slack-desc > $PKG_DIR/$PKGNAME.txt
 )
 
