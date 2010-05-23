@@ -25,7 +25,7 @@
 . ../slack-package.conf
 
 NAME=mysql
-VERSION=5.1.46
+VERSION=5.1.47
 SO_VER=16
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
