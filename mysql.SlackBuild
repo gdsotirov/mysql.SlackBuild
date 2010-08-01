@@ -25,7 +25,7 @@
 . ../slack-package.conf
 
 NAME=mysql
-VERSION=5.1.48
+VERSION=5.1.49
 SO_VER=16
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
@@ -121,24 +121,24 @@ create_docs $PKG $NAME-$VERSION
 rm -f $PKG/usr/doc/$NAME-$VERSION/Docs/manual.chm
 
 # Add some handy library symlinks:
-if [ -r $PKG/usr/lib/mysql/libmysqlclient.so.$SO_VER ]; then
+if [ -r $PKG/usr/lib/mysql/libmysqlclient.so.$SO_VER.0.0 ]; then
   ( cd $PKG/usr/lib
-    rm -f libmysqlclient.so libmysqlclient.so.15
-    ln -sf mysql/libmysqlclient.so .
-    ln -sf mysql/libmysqlclient.so.$SO_VER .
-    ln -sf mysql/libmysqlclient.so.15 .
-    ln -sf mysql/libmysqlclient.so.14 .
+    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0.0
+    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0
+    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER
+    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.15
+    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.14
   )
 else
   exit 1
 fi
-if [ -r $PKG/usr/lib/mysql/libmysqlclient_r.so.$SO_VER ]; then
+if [ -r $PKG/usr/lib/mysql/libmysqlclient_r.so.$SO_VER.0.0 ]; then
   ( cd $PKG/usr/lib
-    rm -f libmysqlclient_r.so libmysqlclient_r.so.15
-    ln -sf mysql/libmysqlclient_r.so .
-    ln -sf mysql/libmysqlclient_r.so.$SO_VER .
-    ln -sf mysql/libmysqlclient_r.so.15 .
-    ln -sf mysql/libmysqlclient_r.so.14 .
+    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0.0
+    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0
+    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER
+    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.15
+    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.14
   )
 else
   exit 1
