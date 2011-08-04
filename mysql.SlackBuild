@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.29 2011/05/11 15:30:15 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.30 2011/08/04 06:36:25 gsotirov Exp $
 #
 # ~~~
 #
@@ -49,7 +49,7 @@
 . ../slack-package.conf
 
 NAME=mysql
-VERSION=5.1.57
+VERSION=5.1.58
 SO_VER=16
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
