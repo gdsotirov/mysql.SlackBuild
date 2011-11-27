@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.31 2011/09/27 17:16:48 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.32 2011/11/27 12:15:48 gsotirov Exp $
 #
 # ~~~
 #
@@ -46,10 +46,10 @@
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-. ../slack-package.conf
+. ../../slack-package.conf
 
 NAME=mysql
-VERSION=5.1.59
+VERSION=5.1.60
 SO_VER=16
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
@@ -77,7 +77,7 @@ mkdir -p $PKG
 
 # Extract and fix source
 cd $TMP
-tar xzvf $CWD/$NAME-$VERSION.tar.gz
+tar -xvf $CWD/$NAME-$VERSION.tar.gz || exit 3
 cd $NAME-$VERSION
 fix_source
 
@@ -89,8 +89,9 @@ CXXFLAGS="$SLKCFLAGS -O3 -felide-constructors -fno-exceptions -fno-rtti" \
 ./configure --build=$ARCH-slackware-linux \
             --host=$ARCH-slackware-linux \
             --prefix=/usr \
-            --libexecdir=/usr/sbin \
             --sysconfdir=/etc \
+            --libexecdir=/usr/sbin \
+	    --libdir=/usr/lib${LIBDIRSUFFIX} \
             --localstatedir=/var/lib/mysql \
             --datadir=/usr/share \
             --infodir=/usr/info \
@@ -109,11 +110,11 @@ CXXFLAGS="$SLKCFLAGS -O3 -felide-constructors -fno-exceptions -fno-rtti" \
             --with-ssl=/usr \
             --with-plugins=max-no-ndb \
             --with-readline \
-            --without-debug || exit 1
+            --without-debug || exit 4
 
 # Build and install
-make -j4 || exit 2
-make DESTDIR=$PKG install || exit 3
+make -j4 || exit 5
+make DESTDIR=$PKG install || exit 6
 
 # Custom install steps
 # - Remove test & benchmark suites
@@ -145,8 +146,8 @@ create_docs $PKG $NAME-$VERSION
 rm -f $PKG/usr/doc/$NAME-$VERSION/Docs/manual.chm
 
 # Add some handy library symlinks:
-if [ -r $PKG/usr/lib/mysql/libmysqlclient.so.$SO_VER.0.0 ]; then
-  ( cd $PKG/usr/lib
+if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0 ]; then
+  ( cd $PKG/usr/lib${LIBDIRSUFFIX}
     ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0.0
     ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0
     ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER
@@ -154,10 +155,11 @@ if [ -r $PKG/usr/lib/mysql/libmysqlclient.so.$SO_VER.0.0 ]; then
     ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.14
   )
 else
-  exit 1
+  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0' is not readable!'"
+  exit 7
 fi
-if [ -r $PKG/usr/lib/mysql/libmysqlclient_r.so.$SO_VER.0.0 ]; then
-  ( cd $PKG/usr/lib
+if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0 ]; then
+  ( cd $PKG/usr/lib${LIBDIRSUFFIX}
     ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0.0
     ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0
     ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER
@@ -165,7 +167,8 @@ if [ -r $PKG/usr/lib/mysql/libmysqlclient_r.so.$SO_VER.0.0 ]; then
     ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.14
   )
 else
-  exit 1
+  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0' is not readable!'"
+  exit 8
 fi
 
 # Install script and info
