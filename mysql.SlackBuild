@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.33 2011/12/03 12:03:46 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.34 2011/12/03 14:55:45 gsotirov Exp $
 #
 # ~~~
 #
@@ -50,7 +50,7 @@
 
 NAME=mysql
 VERSION=5.5.18
-SO_VER=16
+SO_VER=18
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
 
@@ -128,7 +128,7 @@ install -m 644 $PKG/etc/$NAME/magic $PKG/etc/file/magic/$NAME
 
 # - Move logrotate configuration in the right place
 install -m 755 -d $PKG/etc/logrotate.d
-install -m 644 $PKG/usr/$NAME/mysql-log-rotate $PKG/etc/logrotate.d/$NAME
+install -m 644 $PKG/etc/$NAME/mysql-log-rotate $PKG/etc/logrotate.d/$NAME
 
 # - Add init scripts
 install -m 755 -d $PKG/etc/rc.d
@@ -152,30 +152,26 @@ DOCFILES="$DOCFILES BUILD-CMAKE"
 create_docs $PKG $NAME-$VERSION
 
 # Add some handy library symlinks:
-#if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0 ]; then
-#  ( cd $PKG/usr/lib${LIBDIRSUFFIX}
-#    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0.0
-#    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0
-#    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER
-#    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.15
-#    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.14
-#  )
-#else
-#  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0' is not readable!'"
-#  exit 7
-#fi
-#if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0 ]; then
-#  ( cd $PKG/usr/lib${LIBDIRSUFFIX}
-#    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0.0
-#    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0
-#    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER
-#    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.15
-#    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.14
-#  )
-#else
-#  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0' is not readable!'"
-#  exit 8
-#fi
+if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0 ]; then
+  ( cd $PKG/usr/lib${LIBDIRSUFFIX}
+    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0.0
+    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0
+    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER
+  )
+else
+  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0' is not readable!'"
+  exit 7
+fi
+if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0 ]; then
+  ( cd $PKG/usr/lib${LIBDIRSUFFIX}
+    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0.0
+    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0
+    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER
+  )
+else
+  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0' is not readable!'"
+  exit 8
+fi
 
 # Install script and info
 mkdir -p $PKG/install
