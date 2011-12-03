@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Slackware build script for MySQL 5.1
+# Slackware build script for MySQL 5.5
 # Copyright (C) 2006,2007,2009-2011 Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 # This program is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.32 2011/11/27 12:15:48 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.33 2011/12/03 12:03:46 gsotirov Exp $
 #
 # ~~~
 #
@@ -49,7 +49,7 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=5.1.60
+VERSION=5.5.18
 SO_VER=16
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
@@ -82,58 +82,64 @@ cd $NAME-$VERSION
 fix_source
 
 # Configure
-CC=gcc \
-CXX=gcc \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS -O3 -felide-constructors -fno-exceptions -fno-rtti" \
-./configure --build=$ARCH-slackware-linux \
-            --host=$ARCH-slackware-linux \
-            --prefix=/usr \
-            --sysconfdir=/etc \
-            --libexecdir=/usr/sbin \
-	    --libdir=/usr/lib${LIBDIRSUFFIX} \
-            --localstatedir=/var/lib/mysql \
-            --datadir=/usr/share \
-            --infodir=/usr/info \
-            --mandir=/usr/man \
-            --docdir=/usr/doc/$NAME-$VERSION \
-            --enable-shared=yes \
-            --enable-static=no \
-            --enable-assembler \
-            --enable-thread-safe-client \
-            --with-charset=utf8 \
-            --with-extra-charsets=complex \
-            --with-mysqld-user=mysql \
-            --with-unix-socket-path=/var/run/mysql/mysql.sock \
-            --with-libwrap \
-            --with-big-tables \
-            --with-ssl=/usr \
-            --with-plugins=max-no-ndb \
-            --with-readline \
-            --without-debug || exit 4
+cmake . -LA \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_C_COMPILER=gcc \
+        -DCMAKE_C_FLAGS="$SLKCFLAGS" \
+        -DCMAKE_CXX_COMPILER=g++ \
+        -DCMAKE_CXX_FLAGS="$SLKCFLAGS -O3 -felide-constructors -fno-exceptions -fno-rtti" \
+        -DCMAKE_MAKE_PROGRAM=gmake \
+        -DMYSQL_DATADIR=/var/lib/$NAME \
+        -DSYSCONFDIR=/etc/$NAME \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DINSTALL_SUPPORTFILESDIR=/etc/$NAME \
+        -DINSTALL_BINDIR=bin \
+        -DINSTALL_SCRIPTDIR=bin \
+        -DINSTALL_SBINDIR=sbin \
+        -DINSTALL_DOCDIR=doc/$NAME-$VERSION \
+        -DINSTALL_DOCREADMEDIR=doc/$NAME-$VERSION \
+        -DINSTALL_INCLUDEDIR=include/$NAME \
+        -DINSTALL_LIBDIR=lib${LIBDIRSUFFIX}/$NAME \
+        -DINSTALL_PLUGINDIR=lib${LIBDIRSUFFIX}/$NAME/plugin \
+        -DINSTALL_MANDIR=man \
+        -DINSTALL_INFODIR=info \
+        -DINSTALL_LAYOUT=STANDALONE \
+        -DINSTALL_SHAREDIR=share/$NAME \
+        -DINSTALL_MYSQLSHAREDIR=share/$NAME \
+        -DINSTALL_MYSQLDATADIR=lib/$NAME \
+        -DWITH_EXTRA_CHARSETS=all \
+        -DWITH_PIC=ON \
+        -DWITH_SSL=system \
+        -DWITH_ZLIB=system || exit 4
 
 # Build and install
-make -j4 || exit 5
-make DESTDIR=$PKG install || exit 6
+make -j4 VERBOSE=1 || exit 5
+make test || exit 6
+make install DESTDIR=$PKG || exit 7
 
 # Custom install steps
 # - Remove test & benchmark suites
 rm -rf $PKG/usr/mysql-test
 rm -rf $PKG/usr/sql-bench
 
-# - Move configuration files in the proper location
-install -d -m 755 $PKG/etc
-install -m 644 $PKG/usr/share/mysql/my-{huge,large,medium,small,innodb-heavy-4G}.cnf $PKG/etc
-rm -f $PKG/usr/share/mysql/my-{huge,large,medium,small,innodb-heavy-4G}.cnf
+# - Move file command configuration in the right place
+install -m 755 -d $PKG/etc/file/magic
+install -m 644 $PKG/etc/$NAME/magic $PKG/etc/file/magic/$NAME
 
-# - Add init script
+# - Move logrotate configuration in the right place
+install -m 755 -d $PKG/etc/logrotate.d
+install -m 644 $PKG/usr/$NAME/mysql-log-rotate $PKG/etc/logrotate.d/$NAME
+
+# - Add init scripts
 install -m 755 -d $PKG/etc/rc.d
-install -m 644 $CWD/rc.mysqld $PKG/etc/rc.d/rc.mysqld.new
+install -m 744 $PKG/etc/$NAME/mysql.server $PKG/etc/rc.d/rc.mysqld.new
 
+# - Remove empty data dirs
+rm -rf $PKG/usr/data
 # - Create databases storage location
-install -d -o mysql -g mysql -m 750 $PKG/var/lib/mysql
+install -d -o mysql -g mysql -m 750 $PKG/var/lib/$NAME
 # - Create socket storage location
-install -d -o mysql -g mysql -m 755 $PKG/var/run/mysql
+install -d -o mysql -g mysql -m 755 $PKG/var/run/$NAME
 
 # Prepare
 bin_perms $PKG
@@ -142,34 +148,34 @@ sbin_perms $PKG
 gzip_man $PKG
 rm -f $PKG/usr/info/dir
 gzip_info $PKG
+DOCFILES="$DOCFILES BUILD-CMAKE"
 create_docs $PKG $NAME-$VERSION
-rm -f $PKG/usr/doc/$NAME-$VERSION/Docs/manual.chm
 
 # Add some handy library symlinks:
-if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0 ]; then
-  ( cd $PKG/usr/lib${LIBDIRSUFFIX}
-    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0.0
-    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0
-    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER
-    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.15
-    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.14
-  )
-else
-  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0' is not readable!'"
-  exit 7
-fi
-if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0 ]; then
-  ( cd $PKG/usr/lib${LIBDIRSUFFIX}
-    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0.0
-    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0
-    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER
-    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.15
-    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.14
-  )
-else
-  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0' is not readable!'"
-  exit 8
-fi
+#if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0 ]; then
+#  ( cd $PKG/usr/lib${LIBDIRSUFFIX}
+#    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0.0
+#    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0
+#    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER
+#    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.15
+#    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.14
+#  )
+#else
+#  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0' is not readable!'"
+#  exit 7
+#fi
+#if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0 ]; then
+#  ( cd $PKG/usr/lib${LIBDIRSUFFIX}
+#    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0.0
+#    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0
+#    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER
+#    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.15
+#    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.14
+#  )
+#else
+#  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0' is not readable!'"
+#  exit 8
+#fi
 
 # Install script and info
 mkdir -p $PKG/install
