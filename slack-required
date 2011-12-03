@@ -4,5 +4,4 @@ glibc-solibs >= 2.13
 libaio >= 0.3.109
 ncurses >= 5.9
 openssl >= 0.9.8r | openssl-solibs >= 0.9.8r
-perl >= 5.12.3
 zlib >= 1.2.5
