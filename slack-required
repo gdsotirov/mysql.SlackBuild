@@ -1,5 +1,8 @@
-aaa_elflibs >= 13.1 | ncurses >= 5.7
-glibc-solibs >= 2.11.1
-glibc >= 2.11.1
-openssl >= 0.9.8n | openssl-solibs >= 0.9.8n
-zlib >= 1.2.3
+cxxlibs >= 6.0.14 | gcc-g++ >= 4.5.2
+gcc >= 4.5.2
+glibc-solibs >= 2.13
+libaio >= 0.3.109
+ncurses >= 5.9
+openssl >= 0.9.8r | openssl-solibs >= 0.9.8r
+perl >= 5.12.3
+zlib >= 1.2.5
