@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Slackware build script for MySQL 5.1
-# Copyright (C) 2006,2007,2009-2012 Georgi D. Sotirov <gdsotirov@dir.bg>
+# Copyright (C) 2006,2007,2009-2012,2014 Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.32.2.7 2013/02/25 20:20:51 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.32.2.8 2014/03/16 15:52:04 gsotirov Exp $
 #
 # ~~~
 #
@@ -49,7 +49,7 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=5.1.68
+VERSION=5.1.73
 SO_VER=16
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
@@ -78,8 +78,11 @@ mkdir -p $PKG
 # Extract and fix source
 cd $TMP
 tar -xvf $CWD/$NAME-$VERSION.tar.gz || exit 3
-cd $NAME-$VERSION
+cd $SRC
 fix_source
+
+# Patch
+patch -p1 -b -z.orig < $CWD/$NAME-$VERSION.diff || exit 4
 
 # Configure
 CC=gcc \
@@ -110,11 +113,11 @@ CXXFLAGS="$SLKCFLAGS -O3 -felide-constructors -fno-exceptions -fno-rtti" \
             --with-ssl=/usr \
             --with-plugins=max-no-ndb \
             --with-readline \
-            --without-debug || exit 4
+            --without-debug || exit 5
 
 # Build and install
-make -j4 || exit 5
-make DESTDIR=$PKG install || exit 6
+make -j4 || exit 6
+make DESTDIR=$PKG install || exit 7
 
 # Custom install steps
 # - Remove test & benchmark suites
@@ -179,12 +182,13 @@ install -m 644 $CWD/slack-required $PKG/install/slack-required
 install -m 644 $CWD/slack-suggests $PKG/install/slack-suggests
 
 mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/doinst.sh        $PKG/usr/src/slackbuilds/$NAME-$VERSION/doinst.sh
-install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
-install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
-install -m 644 $CWD/slack-suggests   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-suggests
-install -m 644 $CWD/rc.mysqld        $PKG/usr/src/slackbuilds/$NAME-$VERSION/rc.mysqld
-install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
+install -m 644 $CWD/doinst.sh           $PKG/usr/src/slackbuilds/$NAME-$VERSION/doinst.sh
+install -m 644 $CWD/slack-desc          $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
+install -m 644 $CWD/slack-required      $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
+install -m 644 $CWD/slack-suggests      $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-suggests
+install -m 644 $CWD/rc.mysqld           $PKG/usr/src/slackbuilds/$NAME-$VERSION/rc.mysqld
+install -m 644 $CWD/$NAME.SlackBuild    $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
+install -m 644 $CWD/$NAME-$VERSION.diff $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME-$VERSION.diff
 
 # Build package:
 cd $PKG
