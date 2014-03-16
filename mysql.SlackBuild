@@ -20,7 +20,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.15.2.4 2014/03/16 14:49:03 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.15.2.5 2014/03/16 15:00:37 gsotirov Exp $
 #
 
 . ../../slack-package.conf
@@ -147,9 +147,9 @@ rm -r $PKG/usr/mysql-test
 PKG_DIR=${PKG_DIR:-/usr/src/slackpack}
 cd $PKG
 PKGNAME=$NAME-$VERSION-$ARCH-$BUILD$MYIN
-makepkg -l y -c n $PKG_DIR/$PKGNAME.tgz
+makepkg -l y -c n $PKG_DIR/$PKGNAME.txz
 ( cd $PKG_DIR
-  md5sum $PKGNAME.tgz > $PKGNAME.tgz.md5
+  md5sum $PKGNAME.txz > $PKGNAME.txz.md5
   cat $PKG/install/slack-desc > $PKG_DIR/$PKGNAME.txt
 )
 
