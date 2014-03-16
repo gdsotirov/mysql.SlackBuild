@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.46 2014/03/16 16:41:39 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.47 2014/03/16 16:52:53 gsotirov Exp $
 #
 # ~~~
 #
@@ -78,8 +78,11 @@ mkdir -p $PKG
 # Extract and fix source
 cd $TMP
 tar -xvf $CWD/$NAME-$VERSION.tar.gz || exit 3
-cd $NAME-$VERSION
+cd $SRC
 fix_source
+
+# Patch
+patch -p1 -b -z.orig < $CWD/$NAME-$VERSION.diff || exit 4
 
 # Configure
 cmake . -LA \
@@ -110,12 +113,12 @@ cmake . -LA \
         -DWITH_EXTRA_CHARSETS=all \
         -DWITH_PIC=ON \
         -DWITH_SSL=system \
-        -DWITH_ZLIB=system || exit 4
+        -DWITH_ZLIB=system || exit 5
 
 # Build and install
-make -j4 VERBOSE=1 || exit 5
-make test || exit 6
-make install DESTDIR=$PKG || exit 7
+make -j4 VERBOSE=1 || exit 6
+make test || exit 7
+make install DESTDIR=$PKG || exit 8
 
 # Custom install steps
 # - Remove test & benchmark suites
@@ -162,7 +165,7 @@ if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0 ]; then
   )
 else
   echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0' is not readable!'"
-  exit 7
+  exit 9
 fi
 if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0 ]; then
   ( cd $PKG/usr/lib${LIBDIRSUFFIX}
@@ -174,7 +177,7 @@ if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0 ]; the
   )
 else
   echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0' is not readable!'"
-  exit 8
+  exit 9
 fi
 
 # Install script and info
