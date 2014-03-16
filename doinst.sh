@@ -17,18 +17,6 @@ config() {
   # Otherwise, we leave the .new copy for the admin to consider...
 }
 
-# Install the info files for this package
-if [ -x /usr/bin/install-info ]
-then
-   echo -n "Installing info pages... "
-   /usr/bin/install-info --info-dir=/usr/info /usr/info/mysql.info.gz 2>/dev/null
-   if [ $? -eq 0 ]; then
-     echo "${C_GREEN}DONE${C_NORMAL}"
-   else
-     echo "${C_RED}FAILURE${C_NORMAL}"
-   fi
-fi
-
 # Keep same perms on rc.mysqld.new:
 if [ -e etc/rc.d/rc.mysqld ]; then
   cp -a etc/rc.d/rc.mysqld etc/rc.d/rc.mysqld.new.incoming

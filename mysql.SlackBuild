@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.47 2014/03/16 16:52:53 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.48 2014/03/16 17:26:53 gsotirov Exp $
 #
 # ~~~
 #
@@ -105,7 +105,6 @@ cmake . -LA \
         -DINSTALL_LIBDIR=lib${LIBDIRSUFFIX}/$NAME \
         -DINSTALL_PLUGINDIR=lib${LIBDIRSUFFIX}/$NAME/plugin \
         -DINSTALL_MANDIR=man \
-        -DINSTALL_INFODIR=info \
         -DINSTALL_LAYOUT=STANDALONE \
         -DINSTALL_SHAREDIR=share/$NAME \
         -DINSTALL_MYSQLSHAREDIR=share/$NAME \
@@ -149,8 +148,6 @@ bin_perms $PKG
 sbin_perms $PKG
 (cd $PKG; strip_bin; strip_lib)
 gzip_man $PKG
-rm -f $PKG/usr/info/dir
-gzip_info $PKG
 DOCFILES="$DOCFILES BUILD-CMAKE"
 create_docs $PKG $NAME-$VERSION
 
