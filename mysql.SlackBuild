@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.49 2014/03/17 13:55:22 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.50 2014/03/19 17:56:07 gsotirov Exp $
 #
 # ~~~
 #
@@ -81,8 +81,7 @@ tar -xvf $CWD/$NAME-$VERSION.tar.gz || exit 3
 cd $SRC
 fix_source
 
-# Patch
-patch -p1 -b -z.orig < $CWD/$NAME-$VERSION.diff || exit 4
+# Patch (if any)
 
 # Configure
 cmake . -LA \
@@ -191,7 +190,6 @@ install -m 644 $CWD/slack-required      $PKG/usr/src/slackbuilds/$NAME-$VERSION/
 install -m 644 $CWD/slack-suggests      $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-suggests
 install -m 644 $CWD/rc.mysqld           $PKG/usr/src/slackbuilds/$NAME-$VERSION/rc.mysqld
 install -m 644 $CWD/$NAME.SlackBuild    $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
-install -m 644 $CWD/$NAME-$VERSION.diff $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME-$VERSION.diff
 
 # Build package:
 cd $PKG
