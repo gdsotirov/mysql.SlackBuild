@@ -1,7 +1,7 @@
-cxxlibs >= 6.0.14 | gcc-g++ >= 4.5.2
-gcc >= 4.5.2
-glibc-solibs >= 2.13
+cxxlibs >= 6.0.17 | gcc-g++ >= 4.7.1
+gcc >= 4.7.1
+glibc-solibs >= 2.15
 libaio >= 0.3.109
 ncurses >= 5.9
-openssl >= 0.9.8r | openssl-solibs >= 0.9.8r
-zlib >= 1.2.5
+openssl >= 1.0.1f | openssl-solibs >= 1.0.1f
+zlib >= 1.2.6
