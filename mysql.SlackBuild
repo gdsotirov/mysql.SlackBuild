@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.51 2014/03/28 21:48:15 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.52 2014/03/29 06:49:17 gsotirov Exp $
 #
 # ~~~
 #
@@ -179,18 +179,20 @@ fi
 
 # Install script and info
 mkdir -p $PKG/install
-install -m 644 $CWD/doinst.sh      $PKG/install/doinst.sh
-install -m 644 $CWD/slack-desc     $PKG/install/slack-desc
-install -m 644 $CWD/slack-required $PKG/install/slack-required
-install -m 644 $CWD/slack-suggests $PKG/install/slack-suggests
+install -m 644 $CWD/doinst.sh       $PKG/install/doinst.sh
+install -m 644 $CWD/slack-desc      $PKG/install/slack-desc
+install -m 644 $CWD/slack-required  $PKG/install/slack-required
+install -m 644 $CWD/slack-suggests  $PKG/install/slack-suggests
+install -m 644 $CWD/slack-conflicts $PKG/install/slack-conflicts
 
 mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/doinst.sh           $PKG/usr/src/slackbuilds/$NAME-$VERSION/doinst.sh
-install -m 644 $CWD/slack-desc          $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
-install -m 644 $CWD/slack-required      $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
-install -m 644 $CWD/slack-suggests      $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-suggests
-install -m 644 $CWD/rc.mysqld           $PKG/usr/src/slackbuilds/$NAME-$VERSION/rc.mysqld
-install -m 644 $CWD/$NAME.SlackBuild    $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
+install -m 644 $CWD/doinst.sh        $PKG/usr/src/slackbuilds/$NAME-$VERSION/doinst.sh
+install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
+install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
+install -m 644 $CWD/slack-suggests   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-suggests
+install -m 644 $CWD/slack-conflicts  $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-conflicts
+install -m 644 $CWD/rc.mysqld        $PKG/usr/src/slackbuilds/$NAME-$VERSION/rc.mysqld
+install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
 
 # Build package:
 cd $PKG
