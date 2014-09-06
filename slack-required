@@ -3,5 +3,5 @@ gcc >= 4.8.2
 glibc-solibs >= 2.17
 libaio >= 0.3.109
 ncurses >= 5.9
-openssl >= 1.0.1f | openssl-solibs >= 1.0.1f
+openssl >= 1.0.1i | openssl-solibs >= 1.0.1i
 zlib >= 1.2.8
