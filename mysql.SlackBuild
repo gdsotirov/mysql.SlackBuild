@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.55 2015/08/25 17:15:00 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.56 2015/08/25 17:34:47 gsotirov Exp $
 #
 # ~~~
 #
@@ -90,7 +90,7 @@ cmake . -LA \
         -DCMAKE_C_COMPILER=gcc \
         -DCMAKE_C_FLAGS="$SLKCFLAGS" \
         -DCMAKE_CXX_COMPILER=g++ \
-        -DCMAKE_CXX_FLAGS="$SLKCFLAGS -O3 -felide-constructors -fno-exceptions -fno-rtti" \
+        -DCMAKE_CXX_FLAGS="$SLKCFLAGS -O3 -felide-constructors -fno-rtti" \
         -DCMAKE_MAKE_PROGRAM=gmake \
         -DMYSQL_DATADIR=/var/lib/$NAME \
         -DSYSCONFDIR=/etc/$NAME \
