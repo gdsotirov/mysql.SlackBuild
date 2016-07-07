@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Slackware build script for MySQL 5.5
-# Copyright (C) 2006-2015 Georgi D. Sotirov <gdsotirov@dir.bg>
+# Copyright (C) 2006-2016 Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.49.2.5 2015/11/26 20:46:14 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.49.2.6 2016/07/07 17:47:03 gsotirov Exp $
 #
 # ~~~
 #
@@ -49,7 +49,7 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=5.5.46
+VERSION=5.5.50
 SO_VER=18
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
@@ -150,29 +150,34 @@ gzip_man $PKG
 DOCFILES="$DOCFILES BUILD-CMAKE"
 create_docs $PKG $NAME-$VERSION
 
+# Remove static libs
+( cd $PKG;
+  rm usr/lib${LIBDIRSUFFIX}/${NAME}/libmysqlservices.a
+  rm usr/lib${LIBDIRSUFFIX}/${NAME}/libmysqlclient.a )
+
 # Add some handy library symlinks:
-if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0 ]; then
+if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/${NAME}/libmysqlclient.so.$SO_VER.0.0 ]; then
   ( cd $PKG/usr/lib${LIBDIRSUFFIX}
-    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0.0
-    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0
-    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER
-    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.16 # compatible with 5.1
-    ln -sf mysql/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.15 # compatible with 5.0
+    ln -sf ${NAME}/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0.0
+    ln -sf ${NAME}/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER.0
+    ln -sf ${NAME}/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.$SO_VER
+    ln -sf ${NAME}/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.16 # compatible with 5.1
+    ln -sf ${NAME}/libmysqlclient.so.$SO_VER.0.0 libmysqlclient.so.15 # compatible with 5.0
   )
 else
-  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER.0.0' is not readable!'"
+  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/${NAME}/libmysqlclient.so.$SO_VER.0.0' is not readable!'"
   exit 9
 fi
-if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0 ]; then
+if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/${NAME}/libmysqlclient_r.so.$SO_VER.0.0 ]; then
   ( cd $PKG/usr/lib${LIBDIRSUFFIX}
-    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0.0
-    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0
-    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER
-    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.16 # compatible with 5.1
-    ln -sf mysql/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.15 # compatible with 5.0
+    ln -sf ${NAME}/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0.0
+    ln -sf ${NAME}/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER.0
+    ln -sf ${NAME}/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.$SO_VER
+    ln -sf ${NAME}/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.16 # compatible with 5.1
+    ln -sf ${NAME}/libmysqlclient_r.so.$SO_VER.0.0 libmysqlclient_r.so.15 # compatible with 5.0
   )
 else
-  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient_r.so.$SO_VER.0.0' is not readable!'"
+  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/${NAME}/libmysqlclient_r.so.$SO_VER.0.0' is not readable!'"
   exit 9
 fi
 
