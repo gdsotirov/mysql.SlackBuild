@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.58 2016/07/07 11:12:43 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.59 2016/07/07 18:58:44 gsotirov Exp $
 #
 # ~~~
 #
@@ -104,7 +104,7 @@ cmake . -LA \
         -DINSTALL_DOCDIR=doc/$NAME-$VERSION \
         -DINSTALL_DOCREADMEDIR=doc/$NAME-$VERSION \
         -DINSTALL_INCLUDEDIR=include/$NAME \
-        -DINSTALL_LIBDIR=lib${LIBDIRSUFFIX}/$NAME \
+        -DINSTALL_LIBDIR=lib${LIBDIRSUFFIX} \
         -DINSTALL_PLUGINDIR=lib${LIBDIRSUFFIX}/$NAME/plugin \
         -DINSTALL_MANDIR=man \
         -DINSTALL_LAYOUT=STANDALONE \
@@ -159,16 +159,23 @@ gzip_man $PKG
 DOCFILES="$DOCFILES BUILD-CMAKE"
 create_docs $PKG $NAME-$VERSION
 
+# Remove static libraries
+( cd $PKG;
+  rm usr/lib${LIBDIRSUFFIX}/libmysqlservices.a
+  rm usr/lib${LIBDIRSUFFIX}/libmysqlclient.a
+  rm usr/lib${LIBDIRSUFFIX}/libmysqld.a )
+
+
 # Add some handy library symlinks:
-if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0 ]; then
+if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0 ]; then
   ( cd $PKG/usr/lib${LIBDIRSUFFIX}
-    ln -sf mysql/libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0 libmysqlclient.so.18.1 # compatible with 5.6
-    ln -sf mysql/libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0 libmysqlclient.so.18   # compatible with 5.5
-    ln -sf mysql/libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0 libmysqlclient.so.16   # compatible with 5.1
-    ln -sf mysql/libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0 libmysqlclient.so.15   # compatible with 5.0
+    ln -sf libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0 libmysqlclient.so.18.1 # compatible with 5.6
+    ln -sf libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0 libmysqlclient.so.18   # compatible with 5.5
+    ln -sf libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0 libmysqlclient.so.16   # compatible with 5.1
+    ln -sf libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0 libmysqlclient.so.15   # compatible with 5.0
   )
 else
-  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/mysql/libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0' is not readable!'"
+  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0' is not readable!'"
   exit 9
 fi
 
