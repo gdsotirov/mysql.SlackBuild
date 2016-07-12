@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.59 2016/07/07 18:58:44 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.60 2016/07/12 16:19:15 gsotirov Exp $
 #
 # ~~~
 #
@@ -162,9 +162,8 @@ create_docs $PKG $NAME-$VERSION
 # Remove static libraries
 ( cd $PKG;
   rm usr/lib${LIBDIRSUFFIX}/libmysqlservices.a
-  rm usr/lib${LIBDIRSUFFIX}/libmysqlclient.a
+# rm usr/lib${LIBDIRSUFFIX}/libmysqlclient.a # Retain static libmysqlclient for now (see http://bugs.mysql.com/bug.php?id=82202)
   rm usr/lib${LIBDIRSUFFIX}/libmysqld.a )
-
 
 # Add some handy library symlinks:
 if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/libmysqlclient.so.$SO_VER_MAJ.$SO_VER_MIN.0 ]; then
