@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.61 2016/10/13 11:24:11 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.62 2016/12/13 09:35:00 gsotirov Exp $
 #
 # ~~~
 #
@@ -49,12 +49,12 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=5.7.16
+VERSION=5.7.17
 # MySQL Client library version
 # See http://mysqlserverteam.com/the-client-library-part-2-the-version-number/
 SO_VER_MAJ=20
 SO_VER_MIN=3
-SO_VER_PATCH=3
+SO_VER_PATCH=4
 ARCH=${ARCH:-i586}
 BUILD=${BUILD:-1}
 
