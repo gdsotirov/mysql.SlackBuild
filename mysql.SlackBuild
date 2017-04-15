@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Slackware build script for MySQL 5.7
-# Copyright (C) 2006-2016 Georgi D. Sotirov <gdsotirov@dir.bg>
+# Copyright (C) 2006-2017 Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.62 2016/12/13 09:35:00 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.63 2017/04/15 13:52:11 gsotirov Exp $
 #
 # ~~~
 #
@@ -49,12 +49,12 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=5.7.17
+VERSION=5.7.18
 # MySQL Client library version
 # See http://mysqlserverteam.com/the-client-library-part-2-the-version-number/
 SO_VER_MAJ=20
 SO_VER_MIN=3
-SO_VER_PATCH=4
+SO_VER_PATCH=5
 ARCH=${ARCH:-i586}
 BUILD=${BUILD:-1}
 
