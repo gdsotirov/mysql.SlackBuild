@@ -1,0 +1,16 @@
+# Require Boost 1.64 or higher, instead of strictly 1.64
+diff -urNad mysql-8.0.3-rc-orig/cmake/boost.cmake mysql-8.0.3-rc/cmake/boost.cmake
+--- mysql-8.0.3-rc-orig/cmake/boost.cmake	2017-09-19 11:33:50.000000000 -0000
++++ mysql-8.0.3-rc/cmake/boost.cmake	2017-09-29 09:26:33.682999349 -0000
+@@ -272,9 +272,9 @@
+   COULD_NOT_FIND_BOOST()
+ ENDIF()
+ 
+-IF(NOT BOOST_MINOR_VERSION EQUAL 64)
++IF(NOT BOOST_MINOR_VERSION GREATER_EQUAL 64)
+   MESSAGE(WARNING "Boost minor version found is ${BOOST_MINOR_VERSION} "
+-    "we need 64"
++    "we need 64 or higher"
+     )
+   COULD_NOT_FIND_BOOST()
+ ENDIF()
