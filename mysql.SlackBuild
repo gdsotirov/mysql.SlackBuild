@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.64.2.2 2018/01/22 13:20:55 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.64.2.3 2018/01/24 15:03:09 gsotirov Exp $
 #
 # ~~~
 #
@@ -49,12 +49,12 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION='8.0.3-rc'
+VERSION='8.0.4-rc'
 # MySQL Client library version
 # See http://mysqlserverteam.com/the-client-library-part-2-the-version-number/
-SO_VER_MAJ=20
-SO_VER_MIN=3
-SO_VER_PATCH=6
+SO_VER_MAJ=21
+SO_VER_MIN=0
+SO_VER_PATCH=4
 ARCH=${ARCH:-i586}
 BUILD=${BUILD:-1}
 
@@ -66,6 +66,7 @@ if [ ! -e $TMP ]; then
   mkdir -p $TMP # location to build the source
 fi
 
+BOOST_SRC=$TMP/boost_1_65_0
 SRC=$TMP/${NAME}-${VERSION}
 if [ -e $SRC -a -d $SRC ]; then
   echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
@@ -91,17 +92,20 @@ if [ -e $CWD/${NAME}-${VERSION}.diff ]; then
 fi
 
 # Configure
-cmake . -LA \
+# See https://dev.mysql.com/doc/refman/8.0/en/source-configuration-options.html
+cmake . -LAH \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_C_COMPILER=gcc \
-        -DCMAKE_C_FLAGS="$SLKCFLAGS" \
+        -DCMAKE_C_FLAGS="$SLKCFLAGS -fPIC" \
         -DCMAKE_CXX_COMPILER=g++ \
-        -DCMAKE_CXX_FLAGS="$SLKCFLAGS -O3 -felide-constructors" \
+        -DCMAKE_CXX_FLAGS="$SLKCFLAGS -fPIC" \
         -DCMAKE_MAKE_PROGRAM=gmake \
+        -DDOWNLOAD_BOOST=ON \
         -DFEATURE_SET="community" \
         -DMYSQL_DATADIR=/var/lib/$NAME \
         -DSYSCONFDIR=/etc/$NAME \
         -DCMAKE_INSTALL_PREFIX=/usr \
+        -DENABLED_PROFILING=ON \
         -DINSTALL_SUPPORTFILESDIR=/etc/$NAME \
         -DINSTALL_BINDIR=bin \
         -DINSTALL_SBINDIR=sbin \
@@ -118,15 +122,21 @@ cmake . -LA \
         -DINNODB_COMPILER_HINTS=ON \
         -DWITH_ARCHIVE_STORAGE_ENGINE=ON \
         -DWITH_AUTHENTICATION_LDAP=ON \
+        -DWITH_BOOST=$TMP \
         -DWITH_BLACKHOLE_STORAGE_ENGINE=ON \
+        -DWITH_CURL=system \
         -DWITH_EDITLINE=system \
         -DWITH_EXAMPLE_STORAGE_ENGINE=ON \
         -DWITH_FEDERATED_STORAGE_ENGINE=ON \
+        -DWITH_ICU=system \
         -DWITH_INNODB_MEMCACHED=ON \
         -DWITH_LIBEVENT=system \
+        -DWITH_LZMA=system \
+        -DWITH_NUMA=ON \
         -DWITH_PROTOBUF=system \
         -DWITH_EXTRA_CHARSETS=all \
         -DWITH_SSL=system \
+        -DWITH_UNIT_TESTS=ON \
         -DWITH_ZLIB=system || exit 5
 
 # Build and install
@@ -169,13 +179,13 @@ create_docs $PKG ${NAME}-${VERSION}
 # Remove static libraries
 ( cd $PKG;
   rm usr/lib${LIBDIRSUFFIX}/libmysqlservices.a
-# rm usr/lib${LIBDIRSUFFIX}/libmysqlclient.a # Retain static libmysqlclient for now (see http://bugs.mysql.com/bug.php?id=82202)
-  rm usr/lib${LIBDIRSUFFIX}/libmysqld.a )
+  rm usr/lib${LIBDIRSUFFIX}/libmysqlclient.a )
 
 # Add some handy library symlinks:
 MYSQL_CLIENT_SO=libmysqlclient.so.${SO_VER_MAJ}.${SO_VER_MIN}.${SO_VER_PATCH}
 if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/${MYSQL_CLIENT_SO} ]; then
   ( cd $PKG/usr/lib${LIBDIRSUFFIX}
+    ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.20   # compatible with 5.7
     ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.18.1 # compatible with 5.6
     ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.18   # compatible with 5.5
     ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.16   # compatible with 5.1
@@ -195,12 +205,12 @@ install -m 644 $CWD/slack-conflicts $PKG/install/slack-conflicts
 
 SBDIR=$PKG/usr/src/slackbuilds/${NAME}-${VERSION}
 mkdir -p $SBDIR
-install -m 644 $CWD/doinst.sh          $SBDIR/doinst.sh
-install -m 644 $CWD/slack-desc         $SBDIR/slack-desc
-install -m 644 $CWD/slack-required     $SBDIR/slack-required
-install -m 644 $CWD/slack-suggests     $SBDIR/slack-suggests
-install -m 644 $CWD/slack-conflicts    $SBDIR/slack-conflicts
-install -m 644 $CWD/rc.mysqld          $SBDIR/rc.mysqld
+install -m 644 $CWD/doinst.sh       $SBDIR/doinst.sh
+install -m 644 $CWD/slack-desc      $SBDIR/slack-desc
+install -m 644 $CWD/slack-required  $SBDIR/slack-required
+install -m 644 $CWD/slack-suggests  $SBDIR/slack-suggests
+install -m 644 $CWD/slack-conflicts $SBDIR/slack-conflicts
+install -m 644 $CWD/rc.mysqld       $SBDIR/rc.mysqld
 if [ -e $CWD/${NAME}-${VERSION}.diff ]; then
   install -m 644 $CWD/${NAME}-${VERSION}.diff $SBDIR/${NAME}-${VERSION}.diff
 fi
@@ -215,7 +225,8 @@ md5sum ${PKGNAME}.txz > ${PKGNAME}.txz.md5
 cat $PKG/install/slack-desc > $PKG_DIR/${PKGNAME}.txt
 
 if [ "$1" == "--cleanup" ]; then
-   rm -rf $TMP/${NAME}-${VERSION}
+   rm -rf $SRC
+   rm -rf $BOOST_SRC
    rm -rf $TMP/package-${NAME}
 fi
 
