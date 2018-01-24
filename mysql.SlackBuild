@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.64.2.3 2018/01/24 15:03:09 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.64.2.4 2018/01/24 15:19:21 gsotirov Exp $
 #
 # ~~~
 #
@@ -227,6 +227,7 @@ cat $PKG/install/slack-desc > $PKG_DIR/${PKGNAME}.txt
 if [ "$1" == "--cleanup" ]; then
    rm -rf $SRC
    rm -rf $BOOST_SRC
+   rm -rf ${BOOST_SRC}.tar.gz
    rm -rf $TMP/package-${NAME}
 fi
 
