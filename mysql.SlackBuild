@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Slackware build script for MySQL 5.7
+# Slackware build script for MySQL 8.0
 # Copyright (C) 2006-2018 Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 # This program is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.64.2.4 2018/01/24 15:19:21 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.64.2.5 2018/04/19 19:13:32 gsotirov Exp $
 #
 # ~~~
 #
@@ -49,12 +49,13 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION='8.0.4-rc'
+VERSION=8.0.11
+VER_PATCH=11
 # MySQL Client library version
 # See http://mysqlserverteam.com/the-client-library-part-2-the-version-number/
 SO_VER_MAJ=21
 SO_VER_MIN=0
-SO_VER_PATCH=4
+SO_VER_PATCH=${VER_PATCH}
 ARCH=${ARCH:-i586}
 BUILD=${BUILD:-1}
 
@@ -66,7 +67,7 @@ if [ ! -e $TMP ]; then
   mkdir -p $TMP # location to build the source
 fi
 
-BOOST_SRC=$TMP/boost_1_65_0
+BOOST_SRC=$TMP/boost_1_66_0
 SRC=$TMP/${NAME}-${VERSION}
 if [ -e $SRC -a -d $SRC ]; then
   echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
