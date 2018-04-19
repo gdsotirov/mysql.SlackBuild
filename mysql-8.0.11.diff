@@ -1,0 +1,12 @@
+diff -urNad mysql-8.0.11-orig/cmake/lzma.cmake mysql-8.0.11/cmake/lzma.cmake
+--- mysql-8.0.11-orig/cmake/lzma.cmake	2018-04-08 09:44:49.000000000 +0300
++++ mysql-8.0.11/cmake/lzma.cmake	2018-04-19 20:52:12.177132471 +0300
+@@ -24,7 +24,7 @@
+ # bundled is the default
+ 
+ MACRO (FIND_SYSTEM_LZMA)
+-  FIND_PATH(PATH_TO_LZMA NAMES lzma/lzma.h)
++  FIND_PATH(PATH_TO_LZMA NAMES lzma.h)
+   FIND_LIBRARY(LZMA_SYSTEM_LIBRARY NAMES lzma)
+   IF (PATH_TO_LZMA AND LZMA_SYSTEM_LIBRARY)
+     SET(SYSTEM_LZMA_FOUND 1)
