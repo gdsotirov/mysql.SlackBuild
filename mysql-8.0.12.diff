@@ -1,6 +1,6 @@
-diff -urNad mysql-8.0.11-orig/cmake/lzma.cmake mysql-8.0.11/cmake/lzma.cmake
---- mysql-8.0.11-orig/cmake/lzma.cmake	2018-04-08 09:44:49.000000000 +0300
-+++ mysql-8.0.11/cmake/lzma.cmake	2018-04-19 20:52:12.177132471 +0300
+diff -urNad mysql-8.0.12-orig/cmake/lzma.cmake mysql-8.0.12/cmake/lzma.cmake
+--- mysql-8.0.12-orig/cmake/lzma.cmake	2018-06-28 19:18:27.000000000 +0300
++++ mysql-8.0.12/cmake/lzma.cmake	2018-08-13 11:41:45.188531980 +0300
 @@ -24,7 +24,7 @@
  # bundled is the default
  
