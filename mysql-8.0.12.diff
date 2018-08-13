@@ -1,6 +1,7 @@
+# Fix build with system LZMA and ICU 61.1
 diff -urNad mysql-8.0.12-orig/cmake/lzma.cmake mysql-8.0.12/cmake/lzma.cmake
 --- mysql-8.0.12-orig/cmake/lzma.cmake	2018-06-28 19:18:27.000000000 +0300
-+++ mysql-8.0.12/cmake/lzma.cmake	2018-08-13 11:41:45.188531980 +0300
++++ mysql-8.0.12/cmake/lzma.cmake	2018-08-13 12:18:38.550549047 +0300
 @@ -24,7 +24,7 @@
  # bundled is the default
  
@@ -10,3 +11,15 @@ diff -urNad mysql-8.0.12-orig/cmake/lzma.cmake mysql-8.0.12/cmake/lzma.cmake
    FIND_LIBRARY(LZMA_SYSTEM_LIBRARY NAMES lzma)
    IF (PATH_TO_LZMA AND LZMA_SYSTEM_LIBRARY)
      SET(SYSTEM_LZMA_FOUND 1)
+diff -urNad mysql-8.0.12-orig/plugin/x/src/xpl_regex.cc mysql-8.0.12/plugin/x/src/xpl_regex.cc
+--- mysql-8.0.12-orig/plugin/x/src/xpl_regex.cc	2018-06-28 19:18:27.000000000 +0300
++++ mysql-8.0.12/plugin/x/src/xpl_regex.cc	2018-08-13 12:16:08.213086106 +0300
+@@ -26,6 +26,8 @@
+ 
+ #include "include/my_dbug.h"
+ 
++using U_ICU_NAMESPACE::UnicodeString;
++
+ namespace xpl {
+ 
+ Regex::Regex(const char *const pattern)
