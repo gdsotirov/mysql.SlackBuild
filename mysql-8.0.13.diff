@@ -1,0 +1,13 @@
+# Fix build with system LZMA
+diff -urNad mysql-8.0.13-orig/cmake/lzma.cmake mysql-8.0.13/cmake/lzma.cmake
+--- mysql-8.0.13-orig/cmake/lzma.cmake	2018-10-07 11:44:22.000000000 +0300
++++ mysql-8.0.13/cmake/lzma.cmake	2018-10-22 21:43:34.987749536 +0300
+@@ -24,7 +24,7 @@
+ # bundled is the default
+ 
+ MACRO (FIND_SYSTEM_LZMA)
+-  FIND_PATH(PATH_TO_LZMA NAMES lzma/lzma.h)
++  FIND_PATH(PATH_TO_LZMA NAMES lzma.h)
+   FIND_LIBRARY(LZMA_SYSTEM_LIBRARY NAMES lzma)
+   IF (PATH_TO_LZMA AND LZMA_SYSTEM_LIBRARY)
+     SET(SYSTEM_LZMA_FOUND 1)
