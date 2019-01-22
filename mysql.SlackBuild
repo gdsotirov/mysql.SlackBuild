@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Slackware build script for MySQL 8.0
-# Copyright (C) 2006-2018 Georgi D. Sotirov <gdsotirov@dir.bg>
+# Copyright (C) 2006-2019 Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.64.2.7 2018/10/23 11:14:45 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.64.2.8 2019/01/22 13:22:34 gsotirov Exp $
 #
 # ~~~
 #
@@ -49,7 +49,7 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=8.0.13
+VERSION=8.0.14
 VER_PATCH=${VERSION##*.}
 # MySQL Client library version
 # See http://mysqlserverteam.com/the-client-library-part-2-the-version-number/
@@ -67,7 +67,7 @@ if [ ! -e $TMP ]; then
   mkdir -p $TMP # location to build the source
 fi
 
-BOOST_SRC=$TMP/boost_1_66_0
+BOOST_SRC=$TMP/boost_1_68_0
 SRC=$TMP/${NAME}-${VERSION}
 if [ -e $SRC -a -d $SRC ]; then
   echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
@@ -94,7 +94,8 @@ fi
 
 # Configure
 # See https://dev.mysql.com/doc/refman/8.0/en/source-configuration-options.html
-cmake . -LAH \
+mkdir -p build; cd build
+cmake .. -LAH \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_C_COMPILER=gcc \
         -DCMAKE_C_FLAGS="$SLKCFLAGS -fPIC" \
@@ -145,6 +146,7 @@ cmake . -LAH \
 make -j4 VERBOSE=1 || exit 6
 make test || exit 7
 make install DESTDIR=$PKG || exit 8
+cd ..
 
 # Custom install steps
 # - Remove test & benchmark suites
