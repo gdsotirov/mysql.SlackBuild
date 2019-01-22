@@ -1,7 +1,7 @@
 # Fix build with system LZMA
-diff -urNad mysql-8.0.13-orig/cmake/lzma.cmake mysql-8.0.13/cmake/lzma.cmake
---- mysql-8.0.13-orig/cmake/lzma.cmake	2018-10-07 11:44:22.000000000 +0300
-+++ mysql-8.0.13/cmake/lzma.cmake	2018-10-22 21:43:34.987749536 +0300
+diff -urNad mysql-8.0.14-orig/cmake/lzma.cmake mysql-8.0.14/cmake/lzma.cmake
+--- mysql-8.0.14-orig/cmake/lzma.cmake	2018-12-20 22:14:03.000000000 +0200
++++ mysql-8.0.14/cmake/lzma.cmake	2019-01-22 15:19:37.567646104 +0200
 @@ -24,7 +24,7 @@
  # bundled is the default
  
