@@ -8,6 +8,7 @@ icu4c >= 64.2
 libaio >= 0.3.110
 libedit >= 20170329_3.1
 libevent >= 2.1.8
+libtirpc >= 1.1.4
 ncurses >= 6.0
 numactl >= 2.0.11
 openssl >= 1.0.2n | openssl-solibs >= 1.0.2n
