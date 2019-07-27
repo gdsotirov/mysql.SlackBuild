@@ -19,7 +19,7 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.64.2.9 2019/04/25 18:35:42 gsotirov Exp $
+# $Id: mysql.SlackBuild,v 1.64.2.10 2019/07/27 10:33:37 gsotirov Exp $
 #
 # ~~~
 #
@@ -49,12 +49,12 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=8.0.16
+VERSION=8.0.17
 VER_PATCH=${VERSION##*.}
 # MySQL Client library version
 # See http://mysqlserverteam.com/the-client-library-part-2-the-version-number/
 SO_VER_MAJ=21
-SO_VER_MIN=0
+SO_VER_MIN=1
 SO_VER_PATCH=${VER_PATCH}
 ARCH=${ARCH:-i586}
 BUILD=${BUILD:-1}
@@ -137,7 +137,7 @@ cmake .. -LAH \
         -DWITH_PROTOBUF=system \
         -DWITH_EXTRA_CHARSETS=all \
         -DWITH_SSL=system \
-        -DWITH_RAPIDJSON=system \
+        -DWITH_RAPIDJSON=bundled \
         -DWITH_ROUTER=OFF \
         -DWITH_UNIT_TESTS=ON \
         -DWITH_ZLIB=system || exit 5
