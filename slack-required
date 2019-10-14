@@ -1,5 +1,5 @@
 bash
-boost >= 1.69.0
+boost >= 1.70.0
 cyrus-sasl >= 2.1.26
 gcc >= 7.2.0
 gcc-g++ >= 7.2.0
