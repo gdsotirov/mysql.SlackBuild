@@ -49,7 +49,7 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=5.6.47
+VERSION=5.6.48
 SO_VER_MAJ=18
 SO_VER_MIN=1
 ARCH=${ARCH:-i486}
@@ -191,6 +191,8 @@ install -m 644 $CWD/slack-suggests  $PKG/install/slack-suggests
 install -m 644 $CWD/slack-conflicts $PKG/install/slack-conflicts
 
 mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -m 644 $CWD/COPYING          $PKG/usr/src/slackbuilds/$NAME-$VERSION/COPYING
+install -m 644 $CWD/README           $PKG/usr/src/slackbuilds/$NAME-$VERSION/README
 install -m 644 $CWD/doinst.sh        $PKG/usr/src/slackbuilds/$NAME-$VERSION/doinst.sh
 install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
 install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
