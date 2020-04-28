@@ -49,7 +49,7 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION_PATCH=29
+VERSION_PATCH=30
 VERSION=5.7.${VERSION_PATCH}
 # MySQL Client library version
 # See http://mysqlserverteam.com/the-client-library-part-2-the-version-number/
@@ -141,15 +141,15 @@ rm -rf $PKG/usr/sql-bench
 
 # - Move file command configuration in the right place
 install -m 755 -d $PKG/etc/file/magic
-install -m 644 $PKG/etc/$NAME/magic $PKG/etc/file/magic/$NAME
+install -m 644 -p $PKG/etc/$NAME/magic $PKG/etc/file/magic/$NAME
 
 # - Move logrotate configuration in the right place
 install -m 755 -d $PKG/etc/logrotate.d
-install -m 644 $PKG/etc/$NAME/mysql-log-rotate $PKG/etc/logrotate.d/$NAME
+install -m 644 -p $PKG/etc/$NAME/mysql-log-rotate $PKG/etc/logrotate.d/$NAME
 
 # - Add init scripts
 install -m 755 -d $PKG/etc/rc.d
-install -m 744 $PKG/etc/$NAME/mysql.server $PKG/etc/rc.d/rc.mysqld.new
+install -m 744 -p $PKG/etc/$NAME/mysql.server $PKG/etc/rc.d/rc.mysqld.new
 
 # - Remove empty data dirs
 rm -rf $PKG/usr/data
@@ -187,24 +187,26 @@ fi
 
 # Install script and info
 mkdir -p $PKG/install
-install -m 644 $CWD/doinst.sh       $PKG/install/doinst.sh
-install -m 644 $CWD/slack-desc      $PKG/install/slack-desc
-install -m 644 $CWD/slack-required  $PKG/install/slack-required
-install -m 644 $CWD/slack-suggests  $PKG/install/slack-suggests
-install -m 644 $CWD/slack-conflicts $PKG/install/slack-conflicts
+install -m 644 -p $CWD/doinst.sh       $PKG/install/doinst.sh
+install -m 644 -p $CWD/slack-desc      $PKG/install/slack-desc
+install -m 644 -p $CWD/slack-required  $PKG/install/slack-required
+install -m 644 -p $CWD/slack-suggests  $PKG/install/slack-suggests
+install -m 644 -p $CWD/slack-conflicts $PKG/install/slack-conflicts
 
 SBDIR=$PKG/usr/src/slackbuilds/${NAME}-${VERSION}
 mkdir -p $SBDIR
-install -m 644 $CWD/doinst.sh          $SBDIR/doinst.sh
-install -m 644 $CWD/slack-desc         $SBDIR/slack-desc
-install -m 644 $CWD/slack-required     $SBDIR/slack-required
-install -m 644 $CWD/slack-suggests     $SBDIR/slack-suggests
-install -m 644 $CWD/slack-conflicts    $SBDIR/slack-conflicts
-install -m 644 $CWD/rc.mysqld          $SBDIR/rc.mysqld
+install -m 644 -p $CWD/COPYING            $SBDIR/COPYING
+install -m 644 -p $CWD/README             $SBDIR/README
+install -m 644 -p $CWD/doinst.sh          $SBDIR/doinst.sh
+install -m 644 -p $CWD/slack-desc         $SBDIR/slack-desc
+install -m 644 -p $CWD/slack-required     $SBDIR/slack-required
+install -m 644 -p $CWD/slack-suggests     $SBDIR/slack-suggests
+install -m 644 -p $CWD/slack-conflicts    $SBDIR/slack-conflicts
+install -m 644 -p $CWD/rc.mysqld          $SBDIR/rc.mysqld
 if [ -e $CWD/${NAME}-${VERSION}.diff ]; then
-  install -m 644 $CWD/${NAME}-${VERSION}.diff $SBDIR/${NAME}-${VERSION}.diff
+  install -m 644 -p $CWD/${NAME}-${VERSION}.diff $SBDIR/${NAME}-${VERSION}.diff
 fi
-install -m 644 $CWD/${NAME}.SlackBuild $SBDIR/${NAME}.SlackBuild
+install -m 644 -p $CWD/${NAME}.SlackBuild $SBDIR/${NAME}.SlackBuild
 
 # Build package:
 cd $PKG
