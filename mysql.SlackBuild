@@ -133,6 +133,7 @@ cmake .. -LAH \
         -DWITH_ICU=system \
         -DWITH_INNODB_MEMCACHED=ON \
         -DWITH_LIBEVENT=system \
+        -DWITH_LZ4=system \
         -DWITH_NUMA=ON \
         -DWITH_PROTOBUF=system \
         -DWITH_EXTRA_CHARSETS=all \
@@ -152,10 +153,6 @@ cd ..
 # - Remove test & benchmark suites
 rm -rf $PKG/usr/mysql-test
 rm -rf $PKG/usr/sql-bench
-
-# - Move file command configuration in the right place
-install -m 755 -d $PKG/etc/file/magic
-install -m 644 -p $PKG/etc/$NAME/magic $PKG/etc/file/magic/$NAME
 
 # - Move logrotate configuration in the right place
 install -m 755 -d $PKG/etc/logrotate.d
