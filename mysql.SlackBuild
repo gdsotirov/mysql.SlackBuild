@@ -19,8 +19,6 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: mysql.SlackBuild,v 1.64.2.12 2020/01/14 08:50:08 gsotirov Exp $
-#
 # ~~~
 #
 # Based on the original script maintained by Patrick Volkerding <volkerdi@slackware.com>
@@ -49,7 +47,7 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=8.0.21
+VERSION=8.0.22
 VER_PATCH=${VERSION##*.}
 # MySQL Client library version
 # See http://mysqlserverteam.com/the-client-library-part-2-the-version-number/
@@ -67,7 +65,7 @@ if [ ! -e $TMP ]; then
   mkdir -p $TMP # location to build the source
 fi
 
-BOOST_SRC=$TMP/boost_1_68_0
+BOOST_SRC=$TMP/boost_1_73_0
 SRC=$TMP/${NAME}-${VERSION}
 if [ -e $SRC -a -d $SRC ]; then
   echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
