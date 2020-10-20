@@ -1,5 +1,5 @@
 bash
-boost >= 1.72.0
+boost >= 1.73.0
 cyrus-sasl >= 2.1.26
 e2fsprogs >= 1.45.6
 gcc >= 7.2.0
@@ -16,5 +16,5 @@ lz4 >= 1.9.2
 ncurses >= 6.0
 numactl >= 2.0.11
 openssl >= 1.1.1g | openssl-solibs >= 1.1.1g
-protobuf >= 3.2.1
+protobuf >= 3.11.4
 zlib >= 1.2.11
