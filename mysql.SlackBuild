@@ -50,7 +50,7 @@ NAME=mysql
 VERSION_PATCH=32
 VERSION=5.7.${VERSION_PATCH}
 # MySQL Client library version
-# See http://mysqlserverteam.com/the-client-library-part-2-the-version-number/
+# See https://mysqlserverteam.com/the-client-library-part-2-the-version-number/
 SO_VER_MAJ=20   # see SHARED_LIB_MAJOR_VERSION in cmake/mysql_version.cmake
 SO_VER_MIN=3    # see SHARED_LIB_MINOR_VERSION in cmake/mysql_version.cmake
 # see SHARED_LIB_PATCH_VERSION in cmake/mysql_version.cmake (i.e. PATCH_VERSION from cmake/VERSION - 13)
@@ -167,7 +167,7 @@ create_docs $PKG ${NAME}-${VERSION}
 # Remove static libraries
 ( cd $PKG;
   rm usr/lib${LIBDIRSUFFIX}/libmysqlservices.a
-# rm usr/lib${LIBDIRSUFFIX}/libmysqlclient.a # Retain static libmysqlclient for now (see http://bugs.mysql.com/bug.php?id=82202)
+# rm usr/lib${LIBDIRSUFFIX}/libmysqlclient.a # Retain static libmysqlclient for now (see https://bugs.mysql.com/bug.php?id=82202)
   rm usr/lib${LIBDIRSUFFIX}/libmysqld.a )
 
 # Add some handy library symlinks:
