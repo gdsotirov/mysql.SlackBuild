@@ -1,2 +1,4 @@
+cyrus-sasl >= 2.1.26
+libtirpc >= 1.0.1
 perl >= 5.22.2
 python >= 2.7.11
