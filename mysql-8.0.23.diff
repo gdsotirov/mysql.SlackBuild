@@ -1,0 +1,13 @@
+# Fix boolean literal
+diff -urNad mysql-8.0.23-orig/sql/mysqld.cc mysql-8.0.23/sql/mysqld.cc
+--- mysql-8.0.23-orig/sql/mysqld.cc	2020-12-11 09:42:20.000000000 +0200
++++ mysql-8.0.23/sql/mysqld.cc	2021-01-20 08:54:05.398405624 +0200
+@@ -7038,7 +7038,7 @@
+   if (opt_keyring_migration_source || opt_keyring_migration_destination ||
+       migrate_connect_options) {
+     Migrate_keyring mk;
+-    my_getopt_skip_unknown = TRUE;
++    my_getopt_skip_unknown = true;
+     if (mk.init(remaining_argc, remaining_argv, opt_keyring_migration_source,
+                 opt_keyring_migration_destination, opt_keyring_migration_user,
+                 opt_keyring_migration_host, opt_keyring_migration_password,
