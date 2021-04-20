@@ -156,6 +156,9 @@ rm -rf $PKG/usr/sql-bench
 install -m 755 -d $PKG/etc/logrotate.d
 install -m 644 -p $PKG/etc/$NAME/mysql-log-rotate $PKG/etc/logrotate.d/$NAME
 
+# - Make sure /etc/my.cnf.d directory exists
+install -m 755 -d $PKG/etc/my.cnf.d
+
 # - Add init scripts
 install -m 755 -d $PKG/etc/rc.d
 install -m 744 -p $PKG/etc/$NAME/mysql.server $PKG/etc/rc.d/rc.mysqld.new
