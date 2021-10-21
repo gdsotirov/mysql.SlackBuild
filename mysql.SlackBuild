@@ -47,7 +47,7 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION_PATCH=35
+VERSION_PATCH=36
 VERSION=5.7.${VERSION_PATCH}
 # MySQL Client library version
 # See https://mysqlserverteam.com/the-client-library-part-2-the-version-number/
