@@ -67,7 +67,7 @@ CWD=${CWD:-`pwd`}
 PKG_DIR=${PKG_DIR:-/tmp}
 
 if [ ! -e $TMP ]; then
-  mkdir -p $TMP # location to build the source
+  mkdir --parents $TMP # location to build the source
 fi
 
 BOOST_SRC=$TMP/boost_1_73_0
@@ -82,11 +82,11 @@ if [ -e $PKG -a -d $PKG ]; then
   echo "Package creation directory '$PKG' already exists! Please, move it or remove it."
   exit 2
 fi
-mkdir -p $PKG
+mkdir --parents $PKG
 
 # Extract and fix source
 cd $TMP
-tar -xvf $CWD/${NAME}-${VERSION}.tar.gz || exit 3
+tar --extract --verbose --file=$CWD/${NAME}-${VERSION}.tar.gz || exit 3
 cd $SRC
 fix_source
 
@@ -97,7 +97,7 @@ fi
 
 # Configure
 # See https://dev.mysql.com/doc/refman/8.0/en/source-configuration-options.html
-mkdir -p build; cd build
+mkdir --parents build; cd build
 cmake .. -LAH \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_C_COMPILER=gcc \
@@ -147,33 +147,35 @@ cmake .. -LAH \
         -DWITH_ZLIB=system || exit 5
 
 # Build and install
-make -j${MAKE_JOBS} VERBOSE=1 || exit 6
+make --jobs=${MAKE_JOBS} VERBOSE=1 || exit 6
 make test || exit 7
 make install DESTDIR=$PKG || exit 8
 cd ..
 
 # Custom install steps
 # - Remove test & benchmark suites
-rm -rf $PKG/usr/mysql-test
-rm -rf $PKG/usr/sql-bench
+rm --recursive $PKG/usr/mysql-test
+rm --recursive $PKG/usr/sql-bench
 
 # - Move logrotate configuration in the right place
-install -m 755 -d $PKG/etc/logrotate.d
-install -m 644 -p $PKG/etc/$NAME/mysql-log-rotate $PKG/etc/logrotate.d/$NAME
+install --mode 755 --directory $PKG/etc/logrotate.d
+install --mode 644 --preserve-timestamps \
+        $PKG/etc/$NAME/mysql-log-rotate $PKG/etc/logrotate.d/$NAME
 
 # - Make sure /etc/my.cnf.d directory exists
-install -m 755 -d $PKG/etc/my.cnf.d
+install --mode 755 --directory $PKG/etc/my.cnf.d
 
 # - Add init scripts
-install -m 755 -d $PKG/etc/rc.d
-install -m 744 -p $PKG/etc/$NAME/mysql.server $PKG/etc/rc.d/rc.mysqld.new
+install --mode 755 --directory $PKG/etc/rc.d
+install --mode 744 --preserve-timestamps \
+        $PKG/etc/$NAME/mysql.server $PKG/etc/rc.d/rc.mysqld.new
 
 # - Remove empty data dirs
 rm -rf $PKG/usr/data
 # - Create databases storage location
-install -d -o mysql -g mysql -m 750 $PKG/var/lib/$NAME
+install --directory --group mysql --mode 750 --owner mysql $PKG/var/lib/$NAME
 # - Create socket storage location
-install -d -o mysql -g mysql -m 755 $PKG/var/run/$NAME
+install --directory --group mysql --mode 755 --owner mysql $PKG/var/run/$NAME
 
 # Prepare
 bin_perms $PKG
@@ -203,40 +205,54 @@ else
 fi
 
 # Install script and info
-mkdir -p $PKG/install
-install -m 644 -p $CWD/doinst.sh       $PKG/install/doinst.sh
-install -m 644 -p $CWD/slack-desc      $PKG/install/slack-desc
-install -m 644 -p $CWD/slack-required  $PKG/install/slack-required
-install -m 644 -p $CWD/slack-suggests  $PKG/install/slack-suggests
-install -m 644 -p $CWD/slack-conflicts $PKG/install/slack-conflicts
+install --mode 755 --directory $PKG/install
+install --mode 644 --preserve-timestamps \
+        $CWD/doinst.sh       $PKG/install/doinst.sh
+install --mode 644 --preserve-timestamps \
+        $CWD/slack-desc      $PKG/install/slack-desc
+install --mode 644 --preserve-timestamps \
+        $CWD/slack-required  $PKG/install/slack-required
+install --mode 644 --preserve-timestamps \
+        $CWD/slack-suggests  $PKG/install/slack-suggests
+install --mode 644 --preserve-timestamps \
+        $CWD/slack-conflicts $PKG/install/slack-conflicts
 
 SBDIR=$PKG/usr/src/slackbuilds/${NAME}-${VERSION}
-mkdir -p $SBDIR
-install -m 644 -p $CWD/COPYING         $SBDIR/COPYING
-install -m 644 -p $CWD/README          $SBDIR/README
-install -m 644 -p $CWD/doinst.sh       $SBDIR/doinst.sh
-install -m 644 -p $CWD/slack-desc      $SBDIR/slack-desc
-install -m 644 -p $CWD/slack-required  $SBDIR/slack-required
-install -m 644 -p $CWD/slack-suggests  $SBDIR/slack-suggests
-install -m 644 -p $CWD/slack-conflicts $SBDIR/slack-conflicts
-install -m 644 -p $CWD/rc.mysqld       $SBDIR/rc.mysqld
+install --mode 755 --directory $SBDIR
+install --mode 644 --preserve-timestamps \
+        $CWD/COPYING         $SBDIR/COPYING
+install --mode 644 --preserve-timestamps \
+        $CWD/README          $SBDIR/README
+install --mode 644 --preserve-timestamps \
+        $CWD/doinst.sh       $SBDIR/doinst.sh
+install --mode 644 --preserve-timestamps \
+        $CWD/slack-desc      $SBDIR/slack-desc
+install --mode 644 --preserve-timestamps \
+        $CWD/slack-required  $SBDIR/slack-required
+install --mode 644 --preserve-timestamps \
+        $CWD/slack-suggests  $SBDIR/slack-suggests
+install --mode 644 --preserve-timestamps \
+        $CWD/slack-conflicts $SBDIR/slack-conflicts
+install --mode 644 --preserve-timestamps \
+        $CWD/rc.mysqld       $SBDIR/rc.mysqld
 if [ -e $CWD/${NAME}-${VERSION}.diff ]; then
-  install -m 644 -p $CWD/${NAME}-${VERSION}.diff $SBDIR/${NAME}-${VERSION}.diff
+install --mode 644 --preserve-timestamps \
+        $CWD/${NAME}-${VERSION}.diff $SBDIR/${NAME}-${VERSION}.diff
 fi
-install -m 644 -p $CWD/${NAME}.SlackBuild $SBDIR/${NAME}.SlackBuild
+install --mode 644 --preserve-timestamps \
+        $CWD/${NAME}.SlackBuild $SBDIR/${NAME}.SlackBuild
 
 # Build package:
 cd $PKG
 PKGNAME=${NAME}-${VERSION}-${ARCH}-${BUILD}${MYIN}
-makepkg -l y -c n $PKG_DIR/${PKGNAME}.txz
-cd $PKG_DIR
-md5sum ${PKGNAME}.txz > ${PKGNAME}.txz.md5
-cat $PKG/install/slack-desc > $PKG_DIR/${PKGNAME}.txt
+makepkg --chown n --linkadd y $PKG_DIR/${PKGNAME}.txz
+md5sum $PKG_DIR/${PKGNAME}.txz > $PKG_DIR/${PKGNAME}.txz.md5
+install --mode 644 $PKG/install/slack-desc $PKG_DIR/${PKGNAME}.txt
 
 if [ "$1" == "--cleanup" ]; then
-   rm -rf $SRC
-   rm -rf $BOOST_SRC
-   rm -rf ${BOOST_SRC}.tar.gz
-   rm -rf $TMP/package-${NAME}
+   rm --recursive $SRC
+   rm --recursive $BOOST_SRC
+   rm --recursive ${BOOST_SRC}.tar.gz
+   rm --recursive $TMP/package-${NAME}
 fi
 
