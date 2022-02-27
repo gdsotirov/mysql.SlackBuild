@@ -144,7 +144,8 @@ cmake .. -LAH \
         -DWITH_ROUTER=OFF \
         -DWITH_SSL=system \
         -DWITH_UNIT_TESTS=ON \
-        -DWITH_ZLIB=system || exit 5
+        -DWITH_ZLIB=system \
+        -DWITH_ZSTD=system || exit 5
 
 # Build and install
 make --jobs=${MAKE_JOBS} VERBOSE=1 || exit 6

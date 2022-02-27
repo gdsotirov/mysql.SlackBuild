@@ -18,3 +18,4 @@ numactl >= 2.0.11
 openssl >= 1.1.1m | openssl-solibs >= 1.1.1m
 protobuf >= 3.11.4
 zlib >= 1.2.11
+zstd >= 1.5.2
