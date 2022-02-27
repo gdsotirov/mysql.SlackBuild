@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Slackware build script for MySQL 5.7
+# Slackware build script for MySQL 8.0
 # Copyright (C) 2006-2022 Georgi D. Sotirov <gdsotirov@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -47,15 +47,19 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION_PATCH=37
-VERSION=5.7.${VERSION_PATCH}
+VERSION=8.0.27
+VER_PATCH=${VERSION##*.}
 # MySQL Client library version
 # See https://mysqlserverteam.com/the-client-library-part-2-the-version-number/
-SO_VER_MAJ=20   # see SHARED_LIB_MAJOR_VERSION in cmake/mysql_version.cmake
-SO_VER_MIN=3    # see SHARED_LIB_MINOR_VERSION in cmake/mysql_version.cmake
-# see SHARED_LIB_PATCH_VERSION in cmake/mysql_version.cmake (i.e. PATCH_VERSION from cmake/VERSION - 13)
-SO_VER_PATCH=$((VERSION_PATCH-13))
+SO_VER_MAJ=21
+SO_VER_MIN=2
+SO_VER_PATCH=${VER_PATCH}
 ARCH=${ARCH:-i586}
+if [ "${ARCH}" == "x86_64" ]; then
+  MAKE_JOBS=4
+else
+  MAKE_JOBS=8
+fi
 BUILD=${BUILD:-1}
 
 TMP=${TMP:-/tmp}
@@ -66,6 +70,7 @@ if [ ! -e $TMP ]; then
   mkdir -p $TMP # location to build the source
 fi
 
+BOOST_SRC=$TMP/boost_1_73_0
 SRC=$TMP/${NAME}-${VERSION}
 if [ -e $SRC -a -d $SRC ]; then
   echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
@@ -91,20 +96,23 @@ if [ -e $CWD/${NAME}-${VERSION}.diff ]; then
 fi
 
 # Configure
-cmake . -LA \
+# See https://dev.mysql.com/doc/refman/8.0/en/source-configuration-options.html
+mkdir -p build; cd build
+cmake .. -LAH \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_C_COMPILER=gcc \
-        -DCMAKE_C_FLAGS="$SLKCFLAGS" \
+        -DCMAKE_C_FLAGS="$SLKCFLAGS -fPIC" \
         -DCMAKE_CXX_COMPILER=g++ \
-        -DCMAKE_CXX_FLAGS="$SLKCFLAGS -O3 -felide-constructors" \
+        -DCMAKE_CXX_FLAGS="$SLKCFLAGS -fPIC" \
         -DCMAKE_MAKE_PROGRAM=gmake \
+        -DDOWNLOAD_BOOST=ON \
         -DFEATURE_SET="community" \
         -DMYSQL_DATADIR=/var/lib/$NAME \
         -DSYSCONFDIR=/etc/$NAME \
         -DCMAKE_INSTALL_PREFIX=/usr \
+        -DENABLED_PROFILING=ON \
         -DINSTALL_SUPPORTFILESDIR=/etc/$NAME \
         -DINSTALL_BINDIR=bin \
-        -DINSTALL_SCRIPTDIR=bin \
         -DINSTALL_SBINDIR=sbin \
         -DINSTALL_DOCDIR=doc/${NAME}-${VERSION} \
         -DINSTALL_DOCREADMEDIR=doc/${NAME}-${VERSION} \
@@ -118,32 +126,43 @@ cmake . -LA \
         -DINSTALL_MYSQLDATADIR=lib/$NAME \
         -DINNODB_COMPILER_HINTS=ON \
         -DWITH_ARCHIVE_STORAGE_ENGINE=ON \
+        -DWITH_AUTHENTICATION_LDAP=ON \
+        -DWITH_BOOST=$TMP \
         -DWITH_BLACKHOLE_STORAGE_ENGINE=ON \
+        -DWITH_CURL=system \
+        -DWITH_EDITLINE=system \
+        -DWITH_EXAMPLE_STORAGE_ENGINE=ON \
         -DWITH_FEDERATED_STORAGE_ENGINE=ON \
-        -DWITH_PARTITION_STORAGE_ENGINE=ON \
-        -DWITH_AUTHENTICATION_PAM=ON \
+        -DWITH_ICU=system \
+        -DWITH_INNODB_MEMCACHED=ON \
+        -DWITH_LIBEVENT=system \
+        -DWITH_LZ4=system \
+        -DWITH_NUMA=ON \
+        -DWITH_PROTOBUF=system \
         -DWITH_EXTRA_CHARSETS=all \
-        -DWITH_PIC=ON \
         -DWITH_SSL=system \
+        -DWITH_RAPIDJSON=bundled \
+        -DWITH_ROUTER=OFF \
+        -DWITH_UNIT_TESTS=ON \
         -DWITH_ZLIB=system || exit 5
 
 # Build and install
-make -j4 VERBOSE=1 || exit 6
+make -j${MAKE_JOBS} VERBOSE=1 || exit 6
 make test || exit 7
 make install DESTDIR=$PKG || exit 8
+cd ..
 
 # Custom install steps
 # - Remove test & benchmark suites
 rm -rf $PKG/usr/mysql-test
 rm -rf $PKG/usr/sql-bench
 
-# - Move file command configuration in the right place
-install -m 755 -d $PKG/etc/file/magic
-install -m 644 -p $PKG/etc/$NAME/magic $PKG/etc/file/magic/$NAME
-
 # - Move logrotate configuration in the right place
 install -m 755 -d $PKG/etc/logrotate.d
 install -m 644 -p $PKG/etc/$NAME/mysql-log-rotate $PKG/etc/logrotate.d/$NAME
+
+# - Make sure /etc/my.cnf.d directory exists
+install -m 755 -d $PKG/etc/my.cnf.d
 
 # - Add init scripts
 install -m 755 -d $PKG/etc/rc.d
@@ -167,13 +186,13 @@ create_docs $PKG ${NAME}-${VERSION}
 # Remove static libraries
 ( cd $PKG;
   rm usr/lib${LIBDIRSUFFIX}/libmysqlservices.a
-# rm usr/lib${LIBDIRSUFFIX}/libmysqlclient.a # Retain static libmysqlclient for now (see https://bugs.mysql.com/bug.php?id=82202)
-  rm usr/lib${LIBDIRSUFFIX}/libmysqld.a )
+  rm usr/lib${LIBDIRSUFFIX}/libmysqlclient.a )
 
 # Add some handy library symlinks:
 MYSQL_CLIENT_SO=libmysqlclient.so.${SO_VER_MAJ}.${SO_VER_MIN}.${SO_VER_PATCH}
 if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/${MYSQL_CLIENT_SO} ]; then
   ( cd $PKG/usr/lib${LIBDIRSUFFIX}
+    ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.20   # compatible with 5.7
     ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.18.1 # compatible with 5.6
     ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.18   # compatible with 5.5
     ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.16   # compatible with 5.1
@@ -193,14 +212,14 @@ install -m 644 -p $CWD/slack-conflicts $PKG/install/slack-conflicts
 
 SBDIR=$PKG/usr/src/slackbuilds/${NAME}-${VERSION}
 mkdir -p $SBDIR
-install -m 644 -p $CWD/COPYING            $SBDIR/COPYING
-install -m 644 -p $CWD/README             $SBDIR/README
-install -m 644 -p $CWD/doinst.sh          $SBDIR/doinst.sh
-install -m 644 -p $CWD/slack-desc         $SBDIR/slack-desc
-install -m 644 -p $CWD/slack-required     $SBDIR/slack-required
-install -m 644 -p $CWD/slack-suggests     $SBDIR/slack-suggests
-install -m 644 -p $CWD/slack-conflicts    $SBDIR/slack-conflicts
-install -m 644 -p $CWD/rc.mysqld          $SBDIR/rc.mysqld
+install -m 644 -p $CWD/COPYING         $SBDIR/COPYING
+install -m 644 -p $CWD/README          $SBDIR/README
+install -m 644 -p $CWD/doinst.sh       $SBDIR/doinst.sh
+install -m 644 -p $CWD/slack-desc      $SBDIR/slack-desc
+install -m 644 -p $CWD/slack-required  $SBDIR/slack-required
+install -m 644 -p $CWD/slack-suggests  $SBDIR/slack-suggests
+install -m 644 -p $CWD/slack-conflicts $SBDIR/slack-conflicts
+install -m 644 -p $CWD/rc.mysqld       $SBDIR/rc.mysqld
 if [ -e $CWD/${NAME}-${VERSION}.diff ]; then
   install -m 644 -p $CWD/${NAME}-${VERSION}.diff $SBDIR/${NAME}-${VERSION}.diff
 fi
@@ -215,7 +234,9 @@ md5sum ${PKGNAME}.txz > ${PKGNAME}.txz.md5
 cat $PKG/install/slack-desc > $PKG_DIR/${PKGNAME}.txt
 
 if [ "$1" == "--cleanup" ]; then
-   rm -rf $TMP/${NAME}-${VERSION}
+   rm -rf $SRC
+   rm -rf $BOOST_SRC
+   rm -rf ${BOOST_SRC}.tar.gz
    rm -rf $TMP/package-${NAME}
 fi
 
