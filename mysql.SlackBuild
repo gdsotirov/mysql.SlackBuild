@@ -101,9 +101,9 @@ mkdir --parents build; cd build
 cmake .. -LAH \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_COMPILER=g++ \
-        -DCMAKE_CXX_FLAGS="$SLKCFLAGS -fPIC" \
+        -DCMAKE_CXX_FLAGS="$SLKCFLAGS" \
         -DCMAKE_C_COMPILER=gcc \
-        -DCMAKE_C_FLAGS="$SLKCFLAGS -fPIC" \
+        -DCMAKE_C_FLAGS="$SLKCFLAGS" \
         -DCMAKE_INSTALL_PREFIX=/usr \
         -DCMAKE_MAKE_PROGRAM=gmake \
         -DDOWNLOAD_BOOST=ON \
