@@ -92,7 +92,7 @@ fix_source
 
 # Patch (if any)
 if [ -e $CWD/${NAME}-${VERSION}.diff ]; then
-  patch -b -z .orig -p1 < $CWD/${NAME}-${VERSION}.diff || exit 4
+  patch --backup --strip=1 --suffix= .orig < $CWD/${NAME}-${VERSION}.diff || exit 4
 fi
 
 # Configure
@@ -172,7 +172,7 @@ install --mode 744 --preserve-timestamps \
         $PKG/etc/$NAME/mysql.server $PKG/etc/rc.d/rc.mysqld.new
 
 # - Remove empty data dirs
-rm -rf $PKG/usr/data
+rm --recursive $PKG/usr/data
 # - Create databases storage location
 install --directory --group mysql --mode 750 --owner mysql $PKG/var/lib/$NAME
 # - Create socket storage location
