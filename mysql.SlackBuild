@@ -47,7 +47,7 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=8.0.27
+VERSION=8.0.28
 VER_PATCH=${VERSION##*.}
 # MySQL Client library version
 # See https://mysqlserverteam.com/the-client-library-part-2-the-version-number/
@@ -196,9 +196,6 @@ MYSQL_CLIENT_SO=libmysqlclient.so.${SO_VER_MAJ}.${SO_VER_MIN}.${SO_VER_PATCH}
 if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/${MYSQL_CLIENT_SO} ]; then
   ( cd $PKG/usr/lib${LIBDIRSUFFIX}
     ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.20   # compatible with 5.7
-    ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.18.1 # compatible with 5.6
-    ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.18   # compatible with 5.5
-    ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.16   # compatible with 5.1
   )
 else
   echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/${MYSQL_CLIENT_SO}' is not readable!'"
