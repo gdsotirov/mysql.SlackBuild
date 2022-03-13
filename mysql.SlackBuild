@@ -154,9 +154,8 @@ make install DESTDIR=$PKG || exit 8
 cd ..
 
 # Custom install steps
-# - Remove test & benchmark suites
+# - Remove test suite
 rm --recursive $PKG/usr/mysql-test
-rm --recursive $PKG/usr/sql-bench
 
 # - Move logrotate configuration in the right place
 install --mode 755 --directory $PKG/etc/logrotate.d
@@ -171,8 +170,6 @@ install --mode 755 --directory $PKG/etc/rc.d
 install --mode 744 --preserve-timestamps \
         $PKG/etc/$NAME/mysql.server $PKG/etc/rc.d/rc.mysqld.new
 
-# - Remove empty data dirs
-rm --recursive $PKG/usr/data
 # - Create databases storage location
 install --directory --group mysql --mode 750 --owner mysql $PKG/var/lib/$NAME
 # - Create socket storage location
@@ -248,9 +245,9 @@ md5sum $PKG_DIR/${PKGNAME}.txz > $PKG_DIR/${PKGNAME}.txz.md5
 install --mode 644 $PKG/install/slack-desc $PKG_DIR/${PKGNAME}.txt
 
 if [ "$1" == "--cleanup" ]; then
-   rm --recursive $SRC
+   rm ${BOOST_SRC}.tar.bz2
    rm --recursive $BOOST_SRC
-   rm --recursive ${BOOST_SRC}.tar.gz
+   rm --recursive $SRC
    rm --recursive $TMP/package-${NAME}
 fi
 
