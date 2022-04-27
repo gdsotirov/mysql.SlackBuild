@@ -47,7 +47,7 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=8.0.28
+VERSION=8.0.29
 VER_PATCH=${VERSION##*.}
 # MySQL Client library version
 # See https://mysqlserverteam.com/the-client-library-part-2-the-version-number/
@@ -70,7 +70,7 @@ if [ ! -e $TMP ]; then
   mkdir --parents $TMP # location to build the source
 fi
 
-BOOST_SRC=$TMP/boost_1_73_0
+BOOST_SRC=$TMP/boost_1_77_0
 SRC=$TMP/${NAME}-${VERSION}
 if [ -e $SRC -a -d $SRC ]; then
   echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
