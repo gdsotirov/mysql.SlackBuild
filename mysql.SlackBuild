@@ -47,7 +47,7 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=8.0.32
+VERSION=8.0.33
 VER_PATCH=${VERSION##*.}
 # MySQL Client library version
 # See https://mysqlserverteam.com/the-client-library-part-2-the-version-number/
@@ -92,7 +92,7 @@ fix_source
 
 # Patch (if any)
 if [ -e $CWD/${NAME}-${VERSION}.diff ]; then
-  patch --backup --strip=1 --suffix= .orig < $CWD/${NAME}-${VERSION}.diff || exit 4
+  patch --backup --strip=1 --suffix=.orig < $CWD/${NAME}-${VERSION}.diff || exit 4
 fi
 
 # Configure
