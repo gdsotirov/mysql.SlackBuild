@@ -139,12 +139,14 @@ cmake .. -LAH \
         -DWITH_KERBEROS=system \
         -DWITH_LDAP=system \
         -DWITH_LZ4=system \
+        -DWITH_MYSQL_NATIVE_PASSWORD=ON \
         -DWITH_NUMA=ON \
         -DWITH_PROTOBUF=system \
         -DWITH_RAPIDJSON=bundled \
         -DWITH_ROUTER=OFF \
         -DWITH_SASL=system \
         -DWITH_SSL=system \
+        -DWITH_TCMALLOC=bundled \
         -DWITH_UNIT_TESTS=ON \
         -DWITH_ZLIB=system \
         -DWITH_ZSTD=system || exit 5
