@@ -1,8 +1,8 @@
 aaa_glibc-solibs >= 2.33
 bash
-boost >= 1.73.0
 cyrus-sasl >= 2.1.27
 e2fsprogs >= 1.46.5
+eudev >= 3.2.11
 gcc >= 11.2.0
 gcc-g++ >= 11.2.0
 icu4c >= 69.1
@@ -10,12 +10,13 @@ keyutils >= 1.6.3
 krb5 >= 1.19.2
 libaio >= 0.3.112
 libedit >= 20210910_3.1
-libevent >= 2.1.12
+libnsl >= 1.3.0
 libtirpc >= 1.3.2
 lz4 >= 1.9.3
 ncurses >= 6.3
-numactl >= 2.0.11
+numactl >= 2.0.14
+openldap >= 2.4.59
 openssl >= 1.1.1m | openssl-solibs >= 1.1.1m
-protobuf >= 3.11.4
+protobuf >= 3.19.6
 zlib >= 1.2.11
 zstd >= 1.5.2
