@@ -70,7 +70,6 @@ if [ ! -e $TMP ]; then
   mkdir --parents $TMP # location to build the source
 fi
 
-BOOST_SRC=$TMP/boost_1_77_0
 SRC=$TMP/${NAME}-${VERSION}
 if [ -e $SRC -a -d $SRC ]; then
   echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
@@ -249,9 +248,7 @@ md5sum $PKG_DIR/${PKGNAME}.txz > $PKG_DIR/${PKGNAME}.txz.md5
 install --mode 644 $PKG/install/slack-desc $PKG_DIR/${PKGNAME}.txt
 
 if [ "$1" == "--cleanup" ]; then
-   rm ${BOOST_SRC}.tar.bz2
-   rm --recursive $BOOST_SRC
    rm --recursive $SRC
-   rm --recursive $TMP/package-${NAME}
+   rm --recursive $PKG
 fi
 
