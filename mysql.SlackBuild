@@ -51,8 +51,8 @@ VERSION=8.4.4
 VER_PATCH=${VERSION##*.}
 # MySQL Client library version
 # See https://mysqlserverteam.com/the-client-library-part-2-the-version-number/
-SO_VER_MAJ=21
-SO_VER_MIN=2
+SO_VER_MAJ=24
+SO_VER_MIN=0
 SO_VER_PATCH=${VER_PATCH}
 ARCH=${ARCH:-i586}
 if [ "${ARCH}" == "x86_64" ]; then
