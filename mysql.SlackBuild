@@ -146,10 +146,10 @@ cmake .. -LAH \
         -DWITH_ROUTER=OFF \
         -DWITH_SASL=system \
         -DWITH_SSL=system \
-        -DWITH_TCMALLOC=bundled \
         -DWITH_UNIT_TESTS=ON \
         -DWITH_ZLIB=system \
         -DWITH_ZSTD=system || exit 5
+#       -DWITH_TCMALLOC=bundled \ # Fails MakeHypergraphTest.TraceBuffer test
 
 # Build and install
 make --jobs=${MAKE_JOBS} VERBOSE=1 || exit 6
