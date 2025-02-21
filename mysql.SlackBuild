@@ -72,7 +72,7 @@ fi
 
 SRC=$TMP/${NAME}-${VERSION}
 if [ -e $SRC -a -d $SRC ]; then
-  echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
+  echo "Source directory '$SRC' already exists! Please, move it or remove it."
   exit 1
 fi
 
@@ -95,7 +95,7 @@ if [ -e $CWD/${NAME}-${VERSION}.diff ]; then
 fi
 
 # Configure
-# See https://dev.mysql.com/doc/refman/8.0/en/source-configuration-options.html
+# See https://dev.mysql.com/doc/refman/8.4/en/source-configuration-options.html
 mkdir --parents build; cd build
 cmake .. -LAH \
         -DCMAKE_BUILD_TYPE=Release \
