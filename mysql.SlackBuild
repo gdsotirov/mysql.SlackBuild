@@ -183,8 +183,9 @@ bin_perms $PKG
 sbin_perms $PKG
 (cd $PKG; strip_bin; strip_lib)
 gzip_man $PKG
-DOCFILES="$DOCFILES BUILD-CMAKE"
+DOCFILES="$DOCFILES CONTRIBUTING.md INSTALL MYSQL_VERSION SECURITY.md"
 create_docs $PKG ${NAME}-${VERSION}
+( cd $PKG/usr/doc/${NAME}-${VERSION}; mv LICENSE COPYING )
 
 # Remove static libraries
 ( cd $PKG;
