@@ -160,6 +160,22 @@ cd ..
 # - Remove test suite
 rm --recursive $PKG/usr/mysql-test
 
+# - Remove static libraries
+( cd $PKG;
+  rm usr/lib${LIBDIRSUFFIX}/libmysqlservices.a
+  rm usr/lib${LIBDIRSUFFIX}/libmysqlclient.a )
+
+# - Add some handy library symlinks:
+MYSQL_CLIENT_SO=libmysqlclient.so.${SO_VER_MAJ}.${SO_VER_MIN}.${SO_VER_PATCH}
+if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/${MYSQL_CLIENT_SO} ]; then
+  ( cd $PKG/usr/lib${LIBDIRSUFFIX}
+    ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.21   # compatible with 8.0?
+  )
+else
+  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/${MYSQL_CLIENT_SO}' is not readable!'"
+  exit 9
+fi
+
 # - Move logrotate configuration in the right place
 install --mode 755 --directory $PKG/etc/logrotate.d
 install --mode 644 --preserve-timestamps \
@@ -186,22 +202,6 @@ gzip_man $PKG
 DOCFILES="$DOCFILES CONTRIBUTING.md INSTALL MYSQL_VERSION SECURITY.md"
 create_docs $PKG ${NAME}-${VERSION}
 ( cd $PKG/usr/doc/${NAME}-${VERSION}; mv LICENSE COPYING )
-
-# Remove static libraries
-( cd $PKG;
-  rm usr/lib${LIBDIRSUFFIX}/libmysqlservices.a
-  rm usr/lib${LIBDIRSUFFIX}/libmysqlclient.a )
-
-# Add some handy library symlinks:
-MYSQL_CLIENT_SO=libmysqlclient.so.${SO_VER_MAJ}.${SO_VER_MIN}.${SO_VER_PATCH}
-if [ -r $PKG/usr/lib${LIBDIRSUFFIX}/${MYSQL_CLIENT_SO} ]; then
-  ( cd $PKG/usr/lib${LIBDIRSUFFIX}
-    ln -sf ${MYSQL_CLIENT_SO} libmysqlclient.so.20   # compatible with 5.7
-  )
-else
-  echo "File '$PKG/usr/lib${LIBDIRSUFFIX}/${MYSQL_CLIENT_SO}' is not readable!'"
-  exit 9
-fi
 
 # Install script and info
 install --mode 755 --directory $PKG/install
