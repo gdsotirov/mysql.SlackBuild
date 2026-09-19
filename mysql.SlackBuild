@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Slackware build script for MySQL 8.4
+# Slackware build script for MySQL 9.7
 # Copyright (C) 2006-2026 Georgi D. Sotirov <gdsotirov@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -47,7 +47,7 @@
 . ../../slack-package.conf
 
 NAME=mysql
-VERSION=8.4.11
+VERSION=9.7.2
 VER_PATCH=${VERSION##*.}
 # MySQL Client library version
 # See https://mysqlserverteam.com/the-client-library-part-2-the-version-number/
@@ -100,7 +100,7 @@ mkdir --parents build; cd build
 cmake .. -LAH \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_COMPILER=g++ \
-        -DCMAKE_CXX_FLAGS="$SLKCFLAGS" \
+        -DCMAKE_CXX_FLAGS="$SLKCFLAGS -fconcepts-diagnostics-depth=10" \
         -DCMAKE_C_COMPILER=gcc \
         -DCMAKE_C_FLAGS="$SLKCFLAGS" \
         -DCMAKE_INSTALL_PREFIX=/usr \
