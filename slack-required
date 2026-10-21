@@ -17,6 +17,6 @@ ncurses >= 6.3
 numactl >= 2.0.14
 openldap >= 2.4.59
 openssl >= 1.1.1m | openssl-solibs >= 1.1.1m
-protobuf >= 3.19.6
+protobuf >= 24.4
 zlib >= 1.2.11
 zstd >= 1.5.2
